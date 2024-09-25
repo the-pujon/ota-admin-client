@@ -2,9 +2,43 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { signOut_user } from "@/redux/authSlice";
+import { errorToast, successToast, warningToast } from "@/components/Toast";
 
 const DropdownUser = () => {
+  const router = useRouter();
+   const dispatch = useAppDispatch();
+  const { currentUser } = useAppSelector((state) => state.authUI);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const signOut = async () => {
+    console.log("currentUser nav", currentUser);
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response) {
+        console.log("hei...response", response);
+
+        dispatch(signOut_user());
+        successToast(response?.data?.message);
+        // setDropDown(false);
+      }
+    } catch (error) {
+      console.error("hei..Error clearing cookie:", error);
+    }
+  };
+   const logOut = () => {
+    signOut();
+    router.push("/login");
+  };
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -129,7 +163,7 @@ const DropdownUser = () => {
             </li>
           </ul>
           <Link href="/" className="text-primary">
-          <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+          <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" onClick={logOut}>
             <svg
               className="fill-current"
               width="22"
