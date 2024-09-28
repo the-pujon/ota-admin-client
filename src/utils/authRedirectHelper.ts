@@ -1,20 +1,24 @@
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
-const useRedirectHelper = (targetRoute:any)=> {
+const useRedirectHelper = (targetRoute:string)=> {
    const { currentUser } = useAppSelector((state) => state.authUI);
     const router = useRouter();
-    useEffect(()=>{
+    const [loading, setLoading] = useState(true);
+     useEffect(()=>{
        if (typeof currentUser === "undefined") {
-      return;  
-    }
+          return;  
+        }
         if(!currentUser){
           router.push('/')
         }else{
           router.push(targetRoute)
         }
-    },[currentUser,targetRoute,router])
+    setLoading(true);
+  }, [currentUser, targetRoute, router]);
+ 
+
 }
 
 export default useRedirectHelper;

@@ -24,11 +24,8 @@ const DropdownUser = () => {
       );
 
       if (response) {
-        // console.log("hei...response", response);
-
         dispatch(signOut_user());
-        successToast(response?.data?.message);
-        // setDropDown(false);
+        successToast(response?.data?.message);0
       }
     } catch (error) {
       console.error("hei..Error clearing cookie:", error);

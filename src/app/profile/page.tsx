@@ -8,10 +8,9 @@ import { useAppSelector } from "@/redux/hooks";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 import { useRouter } from "next/navigation";
 
-
-
 const Profile = () => {
   useRedirectHelper("/profile");
+ 
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
