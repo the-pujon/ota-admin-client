@@ -5,7 +5,7 @@ import ClickOutside from "@/components/ClickOutside";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { signOut_user } from "@/redux/authSlice";
+import { signOut_user } from "@/redux/slice/authSlice";
 import { errorToast, successToast, warningToast } from "@/components/Toast";
 
 const DropdownUser = () => {
@@ -14,7 +14,6 @@ const DropdownUser = () => {
   const { currentUser } = useAppSelector((state) => state.authUI);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const signOut = async () => {
-    console.log("currentUser nav", currentUser);
     try {
       const response = await axios.post(
         "http://localhost:4000/api/v1/auth/logout",
@@ -25,7 +24,7 @@ const DropdownUser = () => {
       );
 
       if (response) {
-        console.log("hei...response", response);
+        // console.log("hei...response", response);
 
         dispatch(signOut_user());
         successToast(response?.data?.message);
@@ -37,7 +36,7 @@ const DropdownUser = () => {
   };
    const logOut = () => {
     signOut();
-    router.push("/login");
+    // router.push("/login");
   };
 
   return (

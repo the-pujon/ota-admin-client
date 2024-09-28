@@ -1,10 +1,12 @@
 import { combineReducers } from "@reduxjs/toolkit";
 // import authSlice from "./api/authSlice";
-import { baseApi } from "./api/baseApi";
+// import { baseApi } from "./api/baseApi";
 //import storage from "redux-persist/lib/storage";
 import { persistReducer} from "redux-persist";
 import storageEngine from "./forPersistErrorSolve";
-import authSlice from "./authSlice";
+import authSlice from "./slice/authSlice";
+import { baseApi } from "./api/baseApi";
+// import authSlice from "./authSlice";
 
 
 const persistConfig = {

@@ -5,9 +5,9 @@ import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { useUserLoginMutation } from "@/redux/authApi";
+import { useUserLoginMutation } from "@/redux/api/authApi";
 import { useAppDispatch } from "@/redux/hooks";
-import { signInFailure, signInStart, signInSuccess } from "@/redux/authSlice";
+import { signInFailure, signInStart, signInSuccess } from "@/redux/slice/authSlice";
 import { errorToast, successToast, warningToast } from "@/components/Toast";
 import { storeUserInfo } from "@/services/auth.services";
 import Image from "next/image";
@@ -15,13 +15,8 @@ import { TextInput } from "@/components/FormInputs";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from "@/components/CustomButton";
 import { useAppSelector } from "@/redux/hooks"; 
-// export const metadata: Metadata = {
-//   title: "TripNest Admin SignIn Page",
-//   description: "This is a Signin Page TripNest Admin Dashboard Template",
-// };
+import useRedirectHelper from "@/utils/authRedirectHelper";
 
-// import { useRouter } from "next/navigation";
-// import React, { useEffect } from "react";
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(4, { message: "Password must be at least 4 characters long" }),
@@ -30,18 +25,10 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Login = () => {
-  const { currentUser } = useAppSelector((state) => state.authUI);
-    const router = useRouter();
-    useEffect(()=>{
-        if(!currentUser){
-          router.push('/')
-        }else{
-          router.push('/dashboard')
-        }
-    },[currentUser,router])
+  const router = useRouter();
+  useRedirectHelper("/dashboard");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  // const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false); 
   const [userLogin] = useUserLoginMutation();
   const methods = useForm<FormData>({ resolver: zodResolver(schema) });
   const dispatch = useAppDispatch();
@@ -51,21 +38,17 @@ const Login = () => {
     try {
       dispatch(signInStart());
       const res = await userLogin({ ...data }).unwrap();
-
-      if (!res?.data?.user?.isVerified) {
-        router.push("/verifyEmail");
-        setLoading(false);
-      } else {
-        if (res?.data?.accessToken) {
-          // console.log("From login page",res?.data?.user);
-          router.push("/dashboard");
-          setLoading(false);
-          dispatch(signInSuccess(res?.data?.user));
-          successToast(res?.message)
-        }
-        storeUserInfo({ accessToken: res?.data?.accessToken });
-        setLoading(false);
+      if(res?.data?.user?.role === 'customer'){
+        errorToast('You are not an Admin');
       }
+      else if (res?.data?.user?.role === 'admin' && res?.data?.accessToken) { 
+        router.push("/dashboard");
+        setLoading(false);
+        dispatch(signInSuccess(res?.data?.user));
+        successToast(res?.message)
+      }
+         storeUserInfo({ accessToken: res?.data?.accessToken });
+         setLoading(false);
     } catch (error: any) {
       errorToast(error?.data?.message);
       setLoading(false);
@@ -76,18 +59,7 @@ const Login = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-r from-blue-50 to-orange-50">
       <div className="flex bg-white shadow-inner rounded-lg overflow-hidden max-w-full">
-
-        <div className="hidden md:flex flex-1">
-          <Image
-            className="object-cover rounded-tl-lg rounded-bl-lg"
-            src="/auth_bg.svg"
-            alt="Auth Background"
-            width={669}
-            height={705}
-          />
-        </div>
-
-        <div className="flex flex-col flex-1 justify-center p-8">
+        <div className="flex flex-col justify-center p-8">
           <h2 className="text-3xl font-semibold mb-4">
             Welcome to <span className="text-teal_blue">TripNest!</span>
           </h2>
@@ -97,7 +69,6 @@ const Login = () => {
               className="space-y-4"
             >
               <TextInput name="email" label="Email" />
-
               <div className="relative">
                 <TextInput
                   name="password"
