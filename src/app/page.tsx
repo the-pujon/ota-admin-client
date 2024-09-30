@@ -1,7 +1,10 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
+
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import React from 'react';
 import SignIn from "./auth/signin/page";
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+// import store, { persistor } from '../redux/store';
 
 export const metadata: Metadata = {
   title: "TripNest Admin",
@@ -11,8 +14,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <SignIn>            
-      </SignIn>
-    </>
+      <SignIn/>
+   </>
   );
 }
