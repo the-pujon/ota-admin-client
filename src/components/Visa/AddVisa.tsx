@@ -428,7 +428,6 @@ export default function CombinedForm() {
 
   const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>([]);
 
-
   const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
