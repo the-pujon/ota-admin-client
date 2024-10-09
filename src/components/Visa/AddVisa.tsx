@@ -1,316 +1,11 @@
-// "use client";
-// import { useState } from "react";
-// import { useForm, FormProvider, SubmitHandler, useFieldArray } from "react-hook-form";
-// import axios from "axios";
-// import { TextInput } from "../FormInputs";
-// // import { TextInput } from "../FormInputs";
-
-// interface FormData {
-//   countryName: string;
-//   title: string;
-//   subtitle: string;
-//   description: string;
-//   locationNames: { image: File; location: string }[];
-//   capitalCity: string;
-//   telephoneCode: string;
-//   localTime: string;
-//   bankTime: string;
-//   embassyAddress: string;
-//   note: string;
-//   visaRequirements: {
-//     generalDocuments: { title: string; icon: File; bulletPoints: string[] }[];
-//     jobHolder: { icon: File; bulletPoints: string[] };
-//     businessPerson: { icon: File; bulletPoints: string[] };
-//     student: { icon: File; bulletPoints: string[] };
-//     otherDocuments: { icon: File };
-//   };
-//   visaPrice: {
-//     mainText: string;
-//     price: number;
-//     note: string;
-//   };
-//   generalInformationImages: { image: File }[];
-// }
-
-// export default function AddVisa() {
-//   const methods = useForm<FormData>({
-//     defaultValues: {
-//       locationNames: [{ image: {} as File, location: "" }],
-//       visaRequirements: {
-//         generalDocuments: [{ title: "", icon: {} as File, bulletPoints: [] }],
-//         jobHolder: { icon: {} as File, bulletPoints: [] },
-//         businessPerson: { icon: {} as File, bulletPoints: [] },
-//         student: { icon: {} as File, bulletPoints: [] },
-//         otherDocuments: { icon: {} as File },
-//       },
-//       visaPrice: { mainText: "", price: 0, note: "" },
-//       generalInformationImages: [{ image: {} as File }],
-//     },
-//   });
-
-//   const { control, handleSubmit, setValue, reset, formState: { errors } } = methods;
-
-//   // Location image and location name uploads
-//   const { fields: locationFields, append: appendLocation, remove: removeLocation } = useFieldArray({
-//     control,
-//     name: "locationNames",
-//   });
-//   const [locationPreviews, setLocationPreviews] = useState<string[]>([]);
-
-//   // General Information image uploads
-//   const { fields: generalInfoFields, append: appendGeneralInfoImage, remove: removeGeneralInfoImage } = useFieldArray({
-//     control,
-//     name: "generalInformationImages",
-//   });
-//   const [generalInfoImagePreviews, setGeneralInfoImagePreviews] = useState<string[]>([]);
-
-
-//   const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-//     const files = e.target.files;
-//     if (files) {
-//       const fileArray = Array.from(files);
-//       const newImagePreviews = [...locationPreviews];
-//       newImagePreviews[index] = URL.createObjectURL(fileArray[0]);
-//       setLocationPreviews(newImagePreviews);
-//       setValue(`locationNames.${index}.image`, fileArray[0]);
-//     }
-//   };
-
-//   const handleGeneralInfoImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-//     const files = e.target.files;
-//     if (files) {
-//       const fileArray = Array.from(files);
-//       const newImagePreviews = [...generalInfoImagePreviews];
-//       newImagePreviews[index] = URL.createObjectURL(fileArray[0]);
-//       setGeneralInfoImagePreviews(newImagePreviews);
-//       setValue(`generalInformationImages.${index}.image`, fileArray[0]);
-//     }
-//   };
-  
-
-//   const onSubmit: SubmitHandler<FormData> = async (data) => {
-//     console.log(data, "data");
-
-//     const formData = new FormData();
-
-//     formData.append("countryName", data.countryName);
-//     formData.append("title", data.title);
-//     formData.append("subtitle", data.subtitle);
-//     formData.append("description", data.description);
-
-//     data.locationNames.forEach((item, index) => {
-//       formData.append(`location_image_${index}`, item.image);
-//       formData.append(`location_name_${index}`, item.location);
-//     });
-
-//     formData.append("capitalCity", data.capitalCity);
-//     formData.append("telephoneCode", data.telephoneCode);
-//     formData.append("localTime", data.localTime);
-//     formData.append("bankTime", data.bankTime);
-//     formData.append("embassyAddress", data.embassyAddress);
-//     formData.append("note", data.note);
-
-//     // Visa Requirements
-//     data.visaRequirements.generalDocuments.forEach((doc, index) => {
-//       formData.append(`general_document_title_${index}`, doc.title);
-//       formData.append(`general_document_icon_${index}`, doc.icon);
-//       doc.bulletPoints.forEach((point, bulletIndex) => {
-//         formData.append(`general_document_bullet_${index}_${bulletIndex}`, point);
-//       });
-//     });
-
-//     formData.append("jobHolder_icon", data.visaRequirements.jobHolder.icon);
-//     data.visaRequirements.jobHolder.bulletPoints.forEach((point, index) => {
-//       formData.append(`jobHolder_bullet_${index}`, point);
-//     });
-
-//     formData.append("businessPerson_icon", data.visaRequirements.businessPerson.icon);
-//     data.visaRequirements.businessPerson.bulletPoints.forEach((point, index) => {
-//       formData.append(`businessPerson_bullet_${index}`, point);
-//     });
-
-//     formData.append("student_icon", data.visaRequirements.student.icon);
-//     data.visaRequirements.student.bulletPoints.forEach((point, index) => {
-//       formData.append(`student_bullet_${index}`, point);
-//     });
-
-//     formData.append("otherDocuments_icon", data.visaRequirements.otherDocuments.icon);
-
-//     // Visa Price
-//     formData.append("visaPrice_mainText", data.visaPrice.mainText);
-//     formData.append("visaPrice_price", data.visaPrice.price.toString());
-//     formData.append("visaPrice_note", data.visaPrice.note);
-
-//     // General Information Images
-//     data.generalInformationImages.forEach((item, index) => {
-//       formData.append(`general_info_image_${index}`, item.image);
-//     });
-
-//     try {
-//       // await axios.post("http://localhost:5000/upload-combined-content", formData, {
-//       await axios.post("http://localhost:4000/api/v1/visa/addVisaInfo", formData, {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//       });
-//       alert("Content uploaded successfully!");
-//       reset();
-//       setLocationPreviews([]);
-//       setGeneralInfoImagePreviews([]);
-//     } catch (error) {
-//       console.error("Error uploading content", error);
-//     }
-//   };
-
-//   return (
-//     <FormProvider {...methods}>
-//       <form onSubmit={handleSubmit(onSubmit)} className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-8 space-y-8">
-//         <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Countries Content and Image Upload Form</h2>
-
-//         <div className="grid grid-cols-2 gap-8">
-//           <TextInput name="countryName" label="Country Name" />
-//           <TextInput name="title" label="Title" />
-//           <TextInput name="subtitle" label="Subtitle" />
-//           <TextInput name="description" label="Description" type="textarea" />
-//         </div>
-
-//         {/* Location Image Upload */}
-//         <h3 className="text-lg font-semibold text-gray-700">Location Image Upload</h3>
-//         <div className="grid grid-cols-2 gap-4">
-//           {locationFields.map((field, index) => (
-//             <div key={field.id} className="space-y-2 bg-gray-100 p-4 rounded-lg">
-//               <label className="block text-sm font-semibold text-gray-600">Image {index + 1}</label>
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={(e) => handleLocationImageChange(index, e)}
-//                 className="w-full"
-//               />
-//               {locationPreviews[index] && (
-//                 <img src={locationPreviews[index]} alt={`Preview ${index + 1}`} className="w-32 h-32 object-cover rounded-lg" />
-//               )}
-//               <TextInput name={`locationNames.${index}.location`} label="Location Name" />
-//               {locationFields.length > 1 && (
-//                 <button type="button" onClick={() => removeLocation(index)} className="px-4 py-2 bg-red-500 text-white rounded-lg">
-//                   Remove Image
-//                 </button>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//         <button
-//           type="button"
-//           onClick={() => appendLocation({ image: {} as File, location: "" })}
-//           className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-//         >
-//           Add Another Image
-//         </button>
-
-//         <h3 className="text-lg font-semibold text-gray-700">General Information</h3>
-
-//         <div className="grid grid-cols-2 gap-8">
-//           <TextInput name="capitalCity" label="Capital City" />
-//           <TextInput name="telephoneCode" label="Telephone Code" />
-//           <TextInput name="localTime" label="Local Time" />
-//           <TextInput name="bankTime" label="Bank Time" />
-//         </div>
-
-//         <div className="grid grid-cols-2 gap-8">
-//           <TextInput name="embassyAddress" label="Embassy Address" />
-//           <TextInput name="note" label="Note" type="textarea" />
-//         </div>
-
-//         <div className="grid grid-cols-2 gap-4">
-//   {generalInfoFields.map((field, index) => (
-//     <div key={field.id} className="space-y-2 bg-gray-100 p-4 rounded-lg">
-//       <label className="block text-sm font-semibold text-gray-600">Image {index + 1}</label>
-//       <input
-//         type="file"
-//         accept="image/*"
-//         multiple
-//         onChange={(e) => handleGeneralInfoImageChange(index, e)}
-//         className="w-full"
-//       />
-//       {generalInfoImagePreviews.map((preview, i) => (
-//         <img
-//           key={i}
-//           src={preview}
-//           alt={`General Info Preview ${i + 1}`}
-//           className="w-32 h-32 object-cover rounded-lg"
-//         />
-//       ))}
-//       {generalInfoFields.length > 1 && (
-//         <button
-//           type="button"
-//           onClick={() => removeGeneralInfoImage(index)}
-//           className="px-4 py-2 bg-red-500 text-white rounded-lg"
-//         >
-//           Remove Image
-//         </button>
-//       )}
-//     </div>
-//   ))}
-// </div>
-
-//         {/* <div className="grid grid-cols-2 gap-4">
-//           {generalInfoFields.map((field, index) => (
-//             <div key={field.id} className="space-y-2 bg-gray-100 p-4 rounded-lg">
-//               <label className="block text-sm font-semibold text-gray-600">Image {index + 1}</label>
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={(e) => handleGeneralInfoImageChange(index, e)}
-//                 className="w-full"
-//               />
-//               {generalInfoImagePreviews[index] && (
-//                 <img src={generalInfoImagePreviews[index]} alt={General Info Preview ${index + 1}} className="w-32 h-32 object-cover rounded-lg" />
-//               )}
-//               {generalInfoFields.length > 1 && (
-//                 <button type="button" onClick={() => removeGeneralInfoImage(index)} className="px-4 py-2 bg-red-500 text-white rounded-lg">
-//                   Remove Image
-//                 </button>
-//               )}
-//             </div>
-//           ))}
-//         </div> */}
-//         {/* <button
-//           type="button"
-//           onClick={() => appendGeneralInfoImage({ image: {} as File })}
-//           className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-//         >
-//           Add Another Image
-//         </button> */}
-
-//         <h3 className="text-lg font-semibold text-gray-700">Visa Requirements</h3>
-//         <div className="grid grid-cols-2 gap-8">
-//           <TextInput name="generalDocuments" label="General Documents" />
-//           <TextInput name="jobHolder" label="Job Holder" />
-//           <TextInput name="businessPerson" label="Business Person" />
-//           <TextInput name="student" label="Student" /> 
-//           <TextInput name="otherDocuments" label="Other Documents" /> 
-//         </div>
-
-//         <h3 className="text-lg font-semibold text-gray-700">Visa Price Info</h3>
-//         <div className="grid grid-cols-2 gap-8">
-//           <TextInput name="visaPrice.mainText" label="Visa Price Main Text" />
-//           <TextInput name="visaPrice.price" label="Visa Price" type="number" />
-//           <TextInput name="visaPrice.note" label="Visa Price Note" type="textarea" />
-//         </div>
-
-//         <button type="submit" className="px-6 py-2 bg-green-500 text-white rounded-lg">Submit</button>
-//       </form>
-//     </FormProvider>
-//   );
-// }
-
 "use client";
 import { useState } from "react";
 import { useForm, FormProvider, SubmitHandler, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import Breadcrumb from "../Breadcrumbs/Breadcrumb";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
+import Button from "../CustomButton";
 
 interface FormData {
   countryName: string;
@@ -323,6 +18,7 @@ interface FormData {
   capital: string; 
   time: string;
   telephone_code: string; 
+  bank_time: string; 
   embassy_address: string;
   note: { text?: string }[]; 
   general_documents: {
@@ -345,15 +41,13 @@ interface FormData {
     title: string;
     details: string[];
   }[];
-  visaPrice: {
-    mainText: string;
-    price: number;
-    note: string;
-  };
+  visaPrice_mainText: string; 
+  visaPrice_price: string; 
+  visaPrice_note: string; 
 }
 
 
-export default function CombinedForm() {
+export default function AddVisa() {
   const methods = useForm<FormData>({
     defaultValues: {
       locationImages: [{ image: {} as File, location: "" }],
@@ -365,6 +59,7 @@ export default function CombinedForm() {
       capital: '',
       time: '',
       telephone_code: '',
+      bank_time: '',
       embassy_address: '',
       note: [{ text: '' }],
       general_documents: [{ title: '', details: [''] }],
@@ -372,7 +67,9 @@ export default function CombinedForm() {
       student: [{ title: '', details: [''] }],
       job_holder: [{ title: '', details: [''] }],
       other_documents: [{ title: '', details: [''] }],
-      visaPrice: { mainText: "", price: 0, note: "" },
+      visaPrice_mainText: '',
+      visaPrice_price: '',
+      visaPrice_note: '',
     },
   });
 
@@ -494,12 +191,12 @@ formData.append('student', JSON.stringify(data.student));
 formData.append('job_holder', JSON.stringify(data.job_holder));
 formData.append('other_documents', JSON.stringify(data.other_documents));
 
-    // formData.append('visaPrice.mainText', data.visaPrice.mainText);
-    // formData.append('visaPrice.price', data.visaPrice.price.toString());
-    // formData.append('visaPrice.note', data.visaPrice.note);
+    formData.append('visaPrice_mainText', data.visaPrice_mainText);
+    formData.append('visaPrice_price', data.visaPrice_price);
+    formData.append('visaPrice_note', data.visaPrice_note);
 
 
-    // console.log(formData, "formData");
+    console.log(formData, "formData");
     
 
     try {
@@ -509,8 +206,8 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
         },
       });
       console.log(response.data, "data")
-      // alert('Content uploaded successfully!');
-      // reset();
+      alert('Content uploaded successfully!');
+      reset();
       setImagePreviews([]);
     } catch (error) {
       console.error('Error uploading content', error);
@@ -525,7 +222,6 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
 
           <div className="grid grid-cols-2 gap-8">
             <TextInput name="countryName" label="Country Name" />
-            {/* <TextInput name="customId" label="Custom ID" /> */}
             <TextInput name="title" label="Title" />
             <TextInput name="subtitle" label="subtitle" />
             <TextInput name="description" label="Description" type="textarea" />
@@ -548,20 +244,24 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               )}
               <TextInput name={`locationImages.${index}.location`} label="Location Name" />
               {locationImageFields.length > 1 && (
-                <button type="button" onClick={() => removeLocation(index)} className="px-4 py-2 bg-red text-white rounded-lg">
-                  Remove Image
-                </button>
+                <Button
+                btnType="button"
+                containerStyles="px-4 py-2 bg-red text-white rounded"
+                title="Remove"
+                handleClick={() => removeLocation(index)}
+               />
               )}
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => appendLocation({ image: {} as File, location: "" })}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          Add Another Image
-        </button>
+
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg px-4 py-2"
+            title="Add Another Image"
+            handleClick={() => appendLocation({ image: {} as File, location: "" })}
+           />
 
           <h3 className="text-lg font-semibold text-gray-700">General Information Images Upload</h3>
           <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} />
@@ -576,6 +276,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             <TextInput name="capital" label="Capital" />
             <TextInput name="time" label="Local Time" />
             <TextInput name="telephone_code" label="Telephone Code" />
+            <TextInput name="bank_time" label="Bank Time" />
           </div>
           <TextInput name="embassy_address" label="Embassy Address" />
 
@@ -591,22 +292,26 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   handleCKEditorChange(index, "note", data);
                 }}
               />
-              <button
-                type="button"
-                onClick={() => removeNote(index)}
-                className="mt-8 px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Remove
-              </button>
+             <div className="mt-12">
+              {noteFields.length > 1 && (
+                <Button
+                btnType="button"
+                containerStyles="px-4 py-2 bg-red text-white rounded"
+                title="Remove"
+                handleClick={() => removeNote(index)}
+               />
+              )}
+          </div>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendNote({ text: "" })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Add Another Note
-          </button>
+
+
+            <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Note"
+            handleClick={() => appendNote({ text: "" })}
+          />
 
         <h3 className="text-lg font-semibold text-gray-700">Visa Requirements</h3>
         
@@ -628,13 +333,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendGeneralDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another General Document
-          </button>
+
+          <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another General Document"
+            handleClick={() => appendGeneralDocument({ title: "", details: [""] })}
+          />
+
         </div>
         
         <div>
@@ -655,13 +361,15 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendBusinessDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Business Document
-          </button>
+
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Business Document"
+            handleClick={() => appendBusinessDocument({ title: "", details: [""] })}
+          />
+
         </div>
         
         <div>
@@ -682,13 +390,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendStudentDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Student Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Student Document"
+            handleClick={() => appendStudentDocument({ title: "", details: [""] })}
+          />           
+
         </div>
         
         <div>
@@ -709,13 +418,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendJobHolderDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Job Holder Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Job Holder Document"
+            handleClick={() => appendJobHolderDocument({ title: "", details: [""] })}
+          />     
+
         </div>
         
         <div>
@@ -736,28 +446,35 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendOtherDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Other Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Other Document"
+            handleClick={() => appendOtherDocument({ title: "", details: [""] })}
+          />
+
         </div>
 
           
           <h3 className="text-lg font-semibold text-gray-700">Visa Price</h3>
-          {/* <TextInput name="visaPrice.mainText" label="Main Text" />
-          <TextInput name="visaPrice.price" label="Price" type="number" />
-          <TextInput name="visaPrice.note" label="Note" /> */}
+          <TextInput name="visaPrice_mainText" label="Main Text" />
+          <TextInput name="visaPrice_price" label="Price" />
+          <TextInput name="visaPrice_note" label="Note" />
                             
-          <div className="flex justify-center mt-8">
-            <button type="submit" className="px-6 py-3 bg-green-600 text-white rounded-md">
-              Submit
-            </button>
+           <div className="flex justify-center mt-8">
+            <Button
+              btnType="submit"
+              containerStyles="custom-btn-fill" 
+              textStyles="text-white" 
+              title="Save"
+              />
           </div>
         </form>
       </FormProvider>
     </>
   );
 }
+
+
+
