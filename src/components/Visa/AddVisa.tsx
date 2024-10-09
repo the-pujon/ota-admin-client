@@ -5,6 +5,7 @@ import axios from "axios";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
+import Button from "../CustomButton";
 
 interface FormData {
   countryName: string;
@@ -43,15 +44,10 @@ interface FormData {
   visaPrice_mainText: string; 
   visaPrice_price: string; 
   visaPrice_note: string; 
-//   visaPrice: {
-//     mainText: string;
-//     price: string;
-//     note: string;
-//   };
 }
 
 
-export default function CombinedForm() {
+export default function AddVisa() {
   const methods = useForm<FormData>({
     defaultValues: {
       locationImages: [{ image: {} as File, location: "" }],
@@ -74,7 +70,6 @@ export default function CombinedForm() {
       visaPrice_mainText: '',
       visaPrice_price: '',
       visaPrice_note: '',
-    //   visaPrice: { mainText: "", price: "", note: "" },
     },
   });
 
@@ -250,20 +245,24 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               )}
               <TextInput name={`locationImages.${index}.location`} label="Location Name" />
               {locationImageFields.length > 1 && (
-                <button type="button" onClick={() => removeLocation(index)} className="px-4 py-2 bg-red text-white rounded-lg">
-                  Remove Image
-                </button>
+                <Button
+                btnType="button"
+                containerStyles="px-4 py-2 bg-red text-white rounded"
+                title="Remove"
+                handleClick={() => removeLocation(index)}
+               />
               )}
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => appendLocation({ image: {} as File, location: "" })}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          Add Another Image
-        </button>
+
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg px-4 py-2"
+            title="Add Another Image"
+            handleClick={() => appendLocation({ image: {} as File, location: "" })}
+           />
 
           <h3 className="text-lg font-semibold text-gray-700">General Information Images Upload</h3>
           <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} />
@@ -294,22 +293,26 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   handleCKEditorChange(index, "note", data);
                 }}
               />
-              <button
-                type="button"
-                onClick={() => removeNote(index)}
-                className="mt-8 px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Remove
-              </button>
+             <div className="mt-12">
+              {noteFields.length > 1 && (
+                <Button
+                btnType="button"
+                containerStyles="px-4 py-2 bg-red text-white rounded"
+                title="Remove"
+                handleClick={() => removeNote(index)}
+               />
+              )}
+          </div>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendNote({ text: "" })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Add Another Note
-          </button>
+
+
+            <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Note"
+            handleClick={() => appendNote({ text: "" })}
+          />
 
         <h3 className="text-lg font-semibold text-gray-700">Visa Requirements</h3>
         
@@ -331,13 +334,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendGeneralDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another General Document
-          </button>
+
+          <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another General Document"
+            handleClick={() => appendGeneralDocument({ title: "", details: [""] })}
+          />
+
         </div>
         
         <div>
@@ -358,13 +362,15 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendBusinessDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Business Document
-          </button>
+
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Business Document"
+            handleClick={() => appendBusinessDocument({ title: "", details: [""] })}
+          />
+
         </div>
         
         <div>
@@ -385,13 +391,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendStudentDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Student Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Student Document"
+            handleClick={() => appendStudentDocument({ title: "", details: [""] })}
+          />           
+
         </div>
         
         <div>
@@ -412,13 +419,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendJobHolderDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Job Holder Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Job Holder Document"
+            handleClick={() => appendJobHolderDocument({ title: "", details: [""] })}
+          />     
+
         </div>
         
         <div>
@@ -439,13 +447,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               />
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => appendOtherDocument({ title: "", details: [""] })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Add Another Other Document
-          </button>
+
+           <Button
+            btnType="button"
+            containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+            title="Add Another Other Document"
+            handleClick={() => appendOtherDocument({ title: "", details: [""] })}
+          />
+
         </div>
 
           
@@ -454,13 +463,19 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
           <TextInput name="visaPrice_price" label="Price" />
           <TextInput name="visaPrice_note" label="Note" />
                             
-          <div className="flex justify-center mt-8">
-            <button type="submit" className="px-6 py-3 bg-green-600 text-white rounded-md">
-              Submit
-            </button>
+           <div className="flex justify-center mt-8">
+            <Button
+              btnType="submit"
+              containerStyles="custom-btn-fill" 
+              textStyles="text-white" 
+              title="Save"
+              />
           </div>
         </form>
       </FormProvider>
     </>
   );
 }
+
+
+

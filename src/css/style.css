@@ -241,3 +241,12 @@ input[type="search"]::-webkit-search-cancel-button {
 [x-cloak] {
     display: none !important;
 }
+
+
+.custom-btn-hover {
+    @apply rounded-md w-[100px] h-[40px] border border-orange-deep hover:bg-orange-deep text-gray hover:text-white transition;
+  }
+  
+.custom-btn-fill {
+    @apply rounded-md w-[100px] h-[40px] bg-orange-deep text-white;
+  }
