@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import dotenv from 'dotenv';
+dotenv.config();
+
+const API_BASE_URL = process.env.API_BASE_URL;
+const endpoint = '/visa/countries/allVisaData';
+const fullUrl = `${API_BASE_URL}${endpoint}`;
 
 interface VisaData {
   visaInfo: any,
@@ -14,10 +20,11 @@ const TableThree = () => {
 
   const fetchVisaData = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/v1/visa/countries/allVisaData");
+      console.log("Base Url:",API_BASE_URL);
+      const response = await axios.get(fullUrl);
 
       setVisaData(response.data.data);
-      console.log(response.data.data, "data");
+      // console.log(response.data, "data");
     } catch (error) {
       console.error("Error fetching visa data:", error);
     }
