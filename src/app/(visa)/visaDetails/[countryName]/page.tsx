@@ -328,7 +328,6 @@ const VisaPage = ({ params }: { params: { countryName: string } }) => {
   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetching data directly in the component
   useEffect(() => {
     const getVisaData = async () => {
       try {
