@@ -8,6 +8,7 @@ import { useAppSelector } from "@/redux/hooks";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 import { useRouter } from "next/navigation";
 import TableThree from "@/components/Tables/TableThree";
+import ListVisa from "@/components/Visa/ListVisa";
 
 const listVisa = () => {
   useRedirectHelper("/listVisa");
@@ -16,7 +17,7 @@ const listVisa = () => {
     <DefaultLayout>
       <div className="flex flex-col gap-10">
         <Breadcrumb pageName="Visa List" />
-        <TableThree />
+        <ListVisa />
       </div>
     </DefaultLayout>
   );
