@@ -338,6 +338,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import dotenv from 'dotenv';
+dotenv.config();
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const endpoint = `${BASE_URL}/visa/countries/allVisaData`;
+
 
 // Define the interface for your visa data
 interface VisaData {
@@ -352,10 +357,10 @@ const TableThree = () => {
 
   const fetchVisaData = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/v1/visa/countries/allVisaData");
 
-      setVisaData(response.data.data); // Assuming the structure is { success: true, data: [...] }
-      console.log(response.data.data, "data");
+      const response = await axios.get(endpoint);
+      setVisaData(response.data.data);
+
     } catch (error) {
       console.error("Error fetching visa data:", error);
     }
