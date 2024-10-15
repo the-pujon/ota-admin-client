@@ -316,10 +316,10 @@ const fetchVisaData = async (countryName: string) => {
   if (response.status !== 200) {
     throw new Error('Failed to fetch visa info');
   }
-  return response.data.data; // Adjust based on your API response structure
+  return response.data.data;
 };
 
-// This is a Client Component
+
 const VisaPage = ({ params }: { params: { countryName: string } }) => {
   const { countryName } = params;
 //   useRedirectHelper("/listVisa");
