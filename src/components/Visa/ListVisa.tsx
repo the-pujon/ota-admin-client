@@ -43,6 +43,25 @@ const ListVisa = () => {
   }, []);
 
 
+  const handleDeleteClick = async (countryName: string) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete the visa information for ${countryName}?`);
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:4000/api/v1/visa/${countryName}`);
+        setVisaData(visaData.filter((visaItem) => visaItem.visaInfo.countryName !== countryName)); // Remove deleted item from the state
+        alert("Visa information deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting visa info:", error);
+        alert("Failed to delete visa information.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchVisaData();
+  }, []);
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="max-w-full overflow-x-auto">
@@ -84,7 +103,7 @@ const ListVisa = () => {
                     <button className="bg-green-200 text-success p-2 rounded">
                       <FaEdit />
                     </button>
-                    <button className="bg-rose-200 text-danger p-2 rounded">
+                    <button className="bg-rose-200 text-danger p-2 rounded" onClick={() => handleDeleteClick(visaItem.visaInfo.countryName)}>
                       <FaTrashAlt />
                     </button>
                     <button className="bg-blue-200 text-primary p-2 rounded" onClick={() => handleViewClick(visaItem.visaInfo.countryName)}>

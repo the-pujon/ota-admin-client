@@ -52,10 +52,6 @@ interface FormData {
   visaPrice_note: string; 
 }
 
-interface VisaSection{
-  title : string;
-}
-
 export default function AddVisa() {
   const methods = useForm<FormData>({
     defaultValues: {
