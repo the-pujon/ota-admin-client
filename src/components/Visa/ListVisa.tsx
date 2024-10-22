@@ -38,6 +38,19 @@ const ListVisa = () => {
     }
   };
 
+  const handleEditClick = async (countryName: string) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
+      setSelectedVisaInfo(response.data.data);
+      router.push(`/editVisa/${countryName}`);
+      // console.log(response.data, "country")
+      // setIsModalOpen(true);
+
+    } catch (error) {
+      console.error("Error fetching visa info:", error);
+    }
+  };
+
   useEffect(() => {
     fetchVisaData();
   }, []);
@@ -101,7 +114,7 @@ const ListVisa = () => {
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <button className="bg-green-200 text-success p-2 rounded">
-                      <FaEdit />
+                      <FaEdit onClick={() => handleEditClick(visaItem.visaInfo.countryName)}  />
                     </button>
                     <button className="bg-rose-200 text-danger p-2 rounded" onClick={() => handleDeleteClick(visaItem.visaInfo.countryName)}>
                       <FaTrashAlt />
