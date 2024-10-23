@@ -296,7 +296,6 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
     <>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-boxdark shadow-md rounded-md p-8 space-y-8" encType="multipart/form-data" >
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Countries Content and Image Upload Form</h2>
 
           <div className="grid grid-cols-2 gap-8">
             <TextInput name="countryName" label="Country Name" />
@@ -305,7 +304,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             <TextInput name="description" label="Description" type="textarea" />
           </div>
 
-          <h3 className="text-lg font-semibold text-gray-700">Location Image Upload</h3>
+        <h3 className="text-lg font-semibold text-gray-700">Location Image Upload</h3>
         <div className="grid grid-cols-2 gap-4">
           {locationImageFields.map((field, index) => (
             <div key={field.id} className="space-y-2 bg-gray-100 p-4 rounded-lg">

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useController, UseControllerProps } from "react-hook-form";
 
@@ -129,13 +129,57 @@ const DateInput: React.FC<InputProps> = ({ name, label }) => {
 // };
 
 
+// const FileInput: React.FC<FileInputProps> = ({ label, control, name, rules, multiple = false }) => {
+//   const { field } = useController({ name, control, rules });
+//   const [previews, setPreviews] = useState<string[]>([]);
+
+//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const files = Array.from(e.target.files || []);
+//     if (files.length) {
+//       field.onChange(multiple ? files : files[0]);
+
+//       // Generate preview URLs
+//       const previewUrls = files.map((file) => URL.createObjectURL(file));
+//       setPreviews(previewUrls);
+//     }
+//   };
+
+//   return (
+//     <div className="file-input">
+//       <label className="block text-sm font-medium text-gray-700">{label}</label>
+//       <input
+//       // name={name}
+//         type="file"
+//         onChange={handleFileChange}
+//         // onChange={(name) => handleFileChange(name)} 
+//         className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+//         accept="image/*"
+//         multiple={multiple}
+//       />
+//       <div className="flex flex-wrap gap-4 mt-2">
+//         {previews.map((preview:any, index:any) => (
+//           <img key={index} src={preview} alt={`File Preview ${index + 1}`} className="w-40 h-auto" />
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
 const FileInput: React.FC<FileInputProps> = ({ label, control, name, rules, multiple = false }) => {
   const { field } = useController({ name, control, rules });
   const [previews, setPreviews] = useState<string[]>([]);
 
+  // Clean up object URLs to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      previews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, [previews]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length) {
+      // Handle controlled input state
       field.onChange(multiple ? files : files[0]);
 
       // Generate preview URLs
@@ -148,14 +192,15 @@ const FileInput: React.FC<FileInputProps> = ({ label, control, name, rules, mult
     <div className="file-input">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
       <input
+        name={name}  // Make sure the name is applied correctly
         type="file"
         onChange={handleFileChange}
         className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
         accept="image/*"
-        multiple={multiple} // Enable multiple file selection
+        multiple={multiple}
       />
       <div className="flex flex-wrap gap-4 mt-2">
-        {previews.map((preview:any, index:any) => (
+        {previews.map((preview, index) => (
           <img key={index} src={preview} alt={`File Preview ${index + 1}`} className="w-40 h-auto" />
         ))}
       </div>
