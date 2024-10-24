@@ -16,10 +16,13 @@ interface InputProps {
     options: { value: string | number; label: string }[];
   }
   
-  interface FileInputProps extends UseControllerProps {
+  interface FileInputProps {
+    name: string;
     label: string;
-    multiple?: boolean;
+    multiple?: boolean; 
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   }
+  
 const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
     const { register, formState: { errors } } = useFormContext();
   
@@ -165,48 +168,73 @@ const DateInput: React.FC<InputProps> = ({ name, label }) => {
 //   );
 // };
 
-const FileInput: React.FC<FileInputProps> = ({ label, control, name, rules, multiple = false }) => {
-  const { field } = useController({ name, control, rules });
-  const [previews, setPreviews] = useState<string[]>([]);
+// const FileInput: React.FC<FileInputProps> = ({ label, control, name, rules, multiple = false }) => {
+//   const { field } = useController({ name, control, rules });
+//   const [previews, setPreviews] = useState<string[]>([]);
 
-  // Clean up object URLs to avoid memory leaks
-  useEffect(() => {
-    return () => {
-      previews.forEach(preview => URL.revokeObjectURL(preview));
-    };
-  }, [previews]);
+//   // Clean up object URLs to avoid memory leaks
+//   useEffect(() => {
+//     return () => {
+//       previews.forEach(preview => URL.revokeObjectURL(preview));
+//     };
+//   }, [previews]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length) {
-      // Handle controlled input state
-      field.onChange(multiple ? files : files[0]);
+//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const files = Array.from(e.target.files || []);
+//     if (files.length) {
+//       // Handle controlled input state
+//       field.onChange(multiple ? files : files[0]);
 
-      // Generate preview URLs
-      const previewUrls = files.map((file) => URL.createObjectURL(file));
-      setPreviews(previewUrls);
-    }
-  };
+//       // Generate preview URLs
+//       const previewUrls = files.map((file) => URL.createObjectURL(file));
+//       setPreviews(previewUrls);
+//     }
+//   };
 
+//   return (
+//     <div className="file-input">
+//       <label className="block text-sm font-medium text-gray-700">{label}</label>
+//       <input
+//         name={name}  // Make sure the name is applied correctly
+//         type="file"
+//         onChange={handleFileChange}
+//         className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+//         accept="image/*"
+//         multiple={multiple}
+//       />
+//       <div className="flex flex-wrap gap-4 mt-2">
+//         {previews.map((preview, index) => (
+//           <img key={index} src={preview} alt={`File Preview ${index + 1}`} className="w-40 h-auto" />
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
+
+const FileInput: React.FC<FileInputProps> = ({ name, label, multiple = false, onChange }) => {
   return (
-    <div className="file-input">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <div className="mb-4">
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
       <input
-        name={name}  // Make sure the name is applied correctly
         type="file"
-        onChange={handleFileChange}
-        className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+        name={name}
+        id={name}
+        multiple={multiple} 
+        className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-md border border-gray-300 cursor-pointer focus:outline-none"
+        onChange={onChange}
         accept="image/*"
-        multiple={multiple}
       />
-      <div className="flex flex-wrap gap-4 mt-2">
-        {previews.map((preview, index) => (
-          <img key={index} src={preview} alt={`File Preview ${index + 1}`} className="w-40 h-auto" />
-        ))}
-      </div>
     </div>
   );
 };
+
+export default FileInput;
+
 
 
 export { TextInput, SelectInput, DateInput, FileInput };
