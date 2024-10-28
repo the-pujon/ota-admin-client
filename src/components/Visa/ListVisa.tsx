@@ -38,10 +38,42 @@ const ListVisa = () => {
     }
   };
 
+  const handleEditClick = async (countryName: string) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
+      setSelectedVisaInfo(response.data.data);
+      router.push(`/editVisa/${countryName}`);
+      // console.log(response.data, "country")
+      // setIsModalOpen(true);
+
+    } catch (error) {
+      console.error("Error fetching visa info:", error);
+    }
+  };
+
   useEffect(() => {
     fetchVisaData();
   }, []);
 
+
+  const handleDeleteClick = async (countryName: string) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete the visa information for ${countryName}?`);
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:4000/api/v1/visa/${countryName}`);
+        setVisaData(visaData.filter((visaItem) => visaItem.visaInfo.countryName !== countryName)); // Remove deleted item from the state
+        alert("Visa information deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting visa info:", error);
+        alert("Failed to delete visa information.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchVisaData();
+  }, []);
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -82,9 +114,9 @@ const ListVisa = () => {
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <button className="bg-green-200 text-success p-2 rounded">
-                      <FaEdit />
+                      <FaEdit onClick={() => handleEditClick(visaItem.visaInfo.countryName)}  />
                     </button>
-                    <button className="bg-rose-200 text-danger p-2 rounded">
+                    <button className="bg-rose-200 text-danger p-2 rounded" onClick={() => handleDeleteClick(visaItem.visaInfo.countryName)}>
                       <FaTrashAlt />
                     </button>
                     <button className="bg-blue-200 text-primary p-2 rounded" onClick={() => handleViewClick(visaItem.visaInfo.countryName)}>

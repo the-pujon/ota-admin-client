@@ -5,6 +5,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import VisaDetail from "@/components/Visa/VisaDetail";
 import axios from "axios";
+import EditVisa from "@/components/Visa/EditVisa";
 
 
 interface VisaInfo {
@@ -46,7 +47,7 @@ const fetchVisaData = async (countryName: string) => {
 };
 
 
-const VisaPage = ({ params }: { params: { countryName: string } }) => {
+const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
   const { countryName } = params;
   
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
@@ -71,11 +72,11 @@ const VisaPage = ({ params }: { params: { countryName: string } }) => {
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
-        <Breadcrumb pageName={`Visa Details for ${countryName}`} />
+        <Breadcrumb pageName={`Edit Visa for ${countryName}`} />
         {error ? (
           <div>{error}</div>
         ) : visaInfo && visaRequirements ? (
-          <VisaDetail visaInfo={visaInfo} visaRequirements={visaRequirements} />
+          <EditVisa visaInfo={visaInfo} visaRequirements={visaRequirements} />
         ) : (
           <div>Loading...</div>
         )}
@@ -84,4 +85,4 @@ const VisaPage = ({ params }: { params: { countryName: string } }) => {
   );
 };
 
-export default VisaPage;
+export default VisaPageEdit;
