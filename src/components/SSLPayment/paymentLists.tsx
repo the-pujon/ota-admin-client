@@ -34,10 +34,12 @@ const PaymentList = () => {
 
   const handleViewClick = async (cus_name: string) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
+      console.log("view")
+      return;
+      const response = await axios.get(`http://localhost:4000/api/v1/visa/${cus_name}`);
       setSelectedpaymentInfo(response.data.data);
       router.push(`/visaDetails/${cus_name}`);
-      // console.log(response.data, "country")
+      console.log(response.data, "country")
       // setIsModalOpen(true);
 
     } catch (error) {
@@ -56,13 +58,16 @@ const PaymentList = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
-              <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[20px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+                SL
+              </th>
+              <th className="min-w-[20px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                 Transaction ID
               </th>
               <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                 Name
               </th>
-              <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+              <th className="min-w-[20px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                 Amount
               </th>
               <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
@@ -71,14 +76,19 @@ const PaymentList = () => {
               <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
                 Phone
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              {/* <th className="px-4 py-4 font-medium text-black dark:text-white">
                 Actions
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody>
             {paymentData.map((paymentItem, key) => (
               <tr key={key}>
+                <td className="border-b border-[#eee] dark:border-strokedark xl:pl-11">
+                  <h5 className="font-medium text-black dark:text-white">
+                    {key+1}
+                  </h5>
+                </td>
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {paymentItem.tran_id}
@@ -102,7 +112,7 @@ const PaymentList = () => {
                     {paymentItem.cus_phone}
                   </p>
                 </td>
-                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                {/* <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <button className="bg-green-200 text-success p-2 rounded">
                       <FaEdit />
@@ -110,11 +120,11 @@ const PaymentList = () => {
                     <button className="bg-rose-200 text-danger p-2 rounded">
                       <FaTrashAlt />
                     </button>
-                    <button className="bg-blue-200 text-primary p-2 rounded" onClick={() => handleViewClick(paymentItem .paymentInfo.cus_name)}>
+                    <button className="bg-blue-200 text-primary p-2 rounded" onClick={() => handleViewClick(paymentItem .cus_name)}>
                       <FaEye />
                     </button>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

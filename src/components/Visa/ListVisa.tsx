@@ -121,7 +121,7 @@ const ListVisa = () => {
                     </button>
                     <button className="bg-blue-200 text-primary p-2 rounded" onClick={() => handleViewClick(visaItem.visaInfo.countryName)}>
                       <FaEye />
-                    </button>
+                    </button> 
                   </div>
                 </td>
               </tr>
