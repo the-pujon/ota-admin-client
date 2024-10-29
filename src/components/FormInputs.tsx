@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useController, UseControllerProps } from "react-hook-form";
+
 
 
 interface InputProps {
@@ -52,7 +52,7 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
         )}
   
         {errors[name] && (
-          <span className="text-red-600 text-sm">{(errors[name] as any).message}</span>
+          <span className="text-red text-sm">{(errors[name] as any).message}</span>
         )}
       </div>
     );

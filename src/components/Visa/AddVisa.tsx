@@ -182,7 +182,7 @@ const handleFileUpload = (
 
 
   const handleCKEditorChange = (index: number, fieldName: "note", data: string) => {
-    const plainText = data.replace(/<\/?[^>]+(>|$)/g, ""); // Strips HTML tags
+    const plainText = data.replace(/<\/?[^>]+(>|$)/g, "");
     setValue(`note.${index}.text` as const, plainText);
   };
 

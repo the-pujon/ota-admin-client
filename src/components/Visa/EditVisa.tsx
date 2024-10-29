@@ -4,8 +4,9 @@ import axios from "axios";
 import { FileInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import Image from "next/image";
-import { Console } from "console";
 import { FaTimes } from "react-icons/fa";
+import { deleteMedia } from "@/redux/api/deleteImageApi";
+
 
 interface EditVisaProps {
   visaInfo: any;
@@ -37,6 +38,7 @@ const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
       visaPrice_note: "",
     },
   });
+ 
 
   const { handleSubmit, reset, control, setValue } = methods;
 
@@ -54,6 +56,9 @@ const [iconPreviews, setIconPreviews] = useState<{
   job_holder: {},
   other_documents: {},
 });
+
+
+
 
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -76,21 +81,6 @@ const [iconPreviews, setIconPreviews] = useState<{
 
   const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>([]);
 
-
-  // const handleLocationImageChange = (index:any, event:any) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       const newPreviews:any = [...locationImagePreviews];
-  //       newPreviews[index] = reader.result; 
-  //       setLocationImagePreviews(newPreviews);
-  //     };
-  //     reader.readAsDataURL(file);
-      
-  //   }
-  // };
-  
   
   const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -155,6 +145,68 @@ const [iconPreviews, setIconPreviews] = useState<{
       methods.setValue(`${fieldName}.${index}.icon`, file);
     }
   };
+
+
+  // const handleDeleteMedia = async (countryId:any, mediaType:any, publicId:any) => {
+  //   try {
+  //     await deleteMedia(countryId);
+  //     // Update your local state to remove the deleted item from the UI
+  //     if (mediaType === 'images') {
+  //       setImages(prev => prev.filter(image => image.publicId !== publicId));
+  //     } else if (mediaType === 'locationImages') {
+  //       setLocationImages(prev => prev.filter(locImg => locImg.publicId !== publicId));
+  //     } else if (mediaType === 'icon') {
+  //       setDocumentIcons(prev => prev.filter(icon => icon.publicId !== publicId));
+  //     }
+  //   } catch (error) {
+  //     alert("Failed to delete media");
+  //   }
+  // };
+
+  // const handleDeleteMedia = async (countryId: any, mediaType: string, publicId: number) => {
+  //   try {
+  //     // await deleteMedia(countryId, mediaType, publicId);
+  //     await deleteMedia({ visaCountryId: countryId, mediaType, publicId });
+  //     if (mediaType === 'images') {
+  //       setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  //     } else if (mediaType === 'locationImages') {
+  //       setLocationImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  //     } else if (mediaType === 'icon') {
+  //       const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
+  //       setIconPreviews((prev) => ({
+  //         ...prev,
+  //         [mediaType]: categoryIcons.filter((_, i) => i !== index),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     alert("Failed to delete media");
+  //   }
+  // };
+  
+  
+  const handleDeleteMedia = async ( countryId: string, mediaType: string, publicId: number, index: number) => {
+    try {
+      await deleteMedia({ countryId, mediaType, publicId });
+  
+      if (mediaType === 'images') {
+        setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+      } else if (mediaType === 'locationImages') {
+        setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+      } else if (mediaType === 'icon') {
+        const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
+        // Ensure categoryIcons is an array
+        if (Array.isArray(categoryIcons)) {
+          setIconPreviews((prev) => ({
+            ...prev,
+            [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
+          }));
+        }
+      }
+    } catch (error) {
+      alert("Failed to delete media");
+    }
+  };
+  
 
   useEffect(() => {
     if (visaInfo && visaRequirements) {
@@ -265,6 +317,7 @@ const [iconPreviews, setIconPreviews] = useState<{
       console.error("Error updating visa:", error);
     }
   };
+  
 
 
   const removeImage = (index: number) => {
@@ -318,7 +371,8 @@ const [iconPreviews, setIconPreviews] = useState<{
               btnType="button"
               containerStyles="px-4 py-2 bg-red text-white rounded"
               title="Remove"
-              handleClick={() => removeLocation(index)}
+              // handleClick={() => handleDeleteMedia(field.countryId, field.mediaType, field.publicId, index)}
+              handleClick={() => handleDeleteMedia(field.countryId || field.mediaType || field.publicId || 0, index)}
              />
             )}
           </div>
