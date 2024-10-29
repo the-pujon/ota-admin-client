@@ -7,9 +7,9 @@ import Link from "next/link";
 import { useAppSelector } from "@/redux/hooks";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 import { useRouter } from "next/navigation";
-import AddVisa from "@/components/Visa/AddVisa";
+// import AddVisa from "@/components/Visa/AddVisa";
 
-const addVisa = () => {
+const AddVisa = () => {
   useRedirectHelper("/addVisa");
   return (
     <DefaultLayout>
@@ -21,4 +21,4 @@ const addVisa = () => {
   );
 };
 
-export default addVisa;
+export default AddVisa;

@@ -4,7 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 import PaymentList from "@/components/SSLPayment/paymentLists";
 
-const paymentLists = () => {
+const PaymentLists = () => {
   useRedirectHelper("/paymentLists");
  
   return (
@@ -17,4 +17,4 @@ const paymentLists = () => {
   );
 };
 
-export default paymentLists;
+export default PaymentLists;
