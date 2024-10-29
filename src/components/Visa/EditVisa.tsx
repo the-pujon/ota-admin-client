@@ -354,10 +354,19 @@ const [iconPreviews, setIconPreviews] = useState<{
               <button
                 type="button"
                 onClick={() => removeImage(index)}
+
                 className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full hover:bg-red-700"
               >
                 <FaTimes/>
               </button>
+
+              <Button
+               btnType="button"
+               containerStyles="absolute top-0 right-0 p-1 text-white bg-red rounded-full hover:bg-red-700"
+               title=""
+               icon={<FaTimes/>}
+               handleClick={() => removeImage(index)}
+               />
             </div>
           ))}
         </div>
