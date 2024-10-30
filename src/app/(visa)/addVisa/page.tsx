@@ -3,7 +3,6 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AddVisa from "@/components/Visa/AddVisa";
 import useRedirectHelper from "@/utils/authRedirectHelper";
-import { useEffect } from "react";
 
 const Page = () => {
   useRedirectHelper("/addVisa");

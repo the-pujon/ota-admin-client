@@ -66,7 +66,7 @@ const ListVisa = () => {
     fetchVisaData();
   }, []);
 
-  // Pagination logic
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = visaData.slice(indexOfFirstItem, indexOfLastItem);
