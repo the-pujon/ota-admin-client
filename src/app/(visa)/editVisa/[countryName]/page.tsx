@@ -46,8 +46,8 @@ const fetchVisaData = async (countryName: string) => {
 };
  
  
-// const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
-export default function VisaPageEdit({ params }:any) {
+// const Page = ({ params }: { params: { countryName: string } }) => {
+export default function Page({ params }:any) {
   const { countryName } = params;
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
@@ -83,3 +83,4 @@ export default function VisaPageEdit({ params }:any) {
   );
 };
 
+// export default Page;

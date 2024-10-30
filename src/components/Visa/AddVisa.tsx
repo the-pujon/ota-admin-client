@@ -7,6 +7,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import toast from "react-hot-toast";
+import Image from "next/image";
  
 interface FormData {
   countryName: string;
@@ -320,7 +321,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 className="w-full"
               />
               {locationImagePreviews[index] && (
-                <img src={locationImagePreviews[index]} alt={`Preview ${index + 1}`} className="w-32 h-32 object-cover rounded-lg" />
+                <Image src={locationImagePreviews[index]} 
+                 alt={`Preview ${index + 1}`} 
+                 width={300} 
+                 height={300} 
+                 className="object-cover rounded" 
+                 />
               )}
               <TextInput name={`locationImages.${index}.location`} label="Location Name" />
               {locationImageFields.length > 1 && (
@@ -346,7 +352,13 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
           <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} />
           <div className="flex space-x-4">
             {imagePreviews.map((preview, index) => (
-              <img key={index} src={preview} alt={`Preview ${index}`} className="w-24 h-24 object-cover" />
+              <Image key={index} 
+               src={preview} 
+               alt={`Preview ${index}`} 
+               width={200} 
+               height={200} 
+               className="object-cover" 
+               />
             ))}
           </div>
  
@@ -405,10 +417,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   onChange={(e) => handleFileUpload("general_documents", index, e)} 
                 />
                 {iconPreviews.general_documents[index] && ( 
-                  <img
+                  <Image
                     src={iconPreviews.general_documents[index]} 
                     alt={`Icon Preview ${index + 1}`} 
-                    className="w-8 h-8 object-cover"
+                    width={40}
+                    height={40}
+                    className="object-cover"
                   />
                 )}
                 <label htmlFor={`general_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
@@ -444,9 +458,11 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   onChange={(e) => handleFileUpload("business_person", index, e)} 
                 />
                 {iconPreviews.business_person[index] && ( 
-                  <img
+                  <Image
                     src={iconPreviews.business_person[index]} 
-                    alt={`Icon Preview ${index + 1}`} 
+                    alt={`Icon Preview ${index + 1}`}
+                    width={40}
+                    height={40}
                     className="w-8 h-8 object-cover"
                   />
                 )}
@@ -483,9 +499,11 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   onChange={(e) => handleFileUpload("student", index, e)} 
                 />
                 {iconPreviews.student[index] && ( 
-                  <img
+                  <Image
                     src={iconPreviews.student[index]} 
                     alt={`Icon Preview ${index + 1}`} 
+                    width={40}
+                    height={40}
                     className="w-8 h-8 object-cover"
                   />
                 )}
@@ -522,10 +540,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   onChange={(e) => handleFileUpload("job_holder", index, e)} 
                 />
                 {iconPreviews.job_holder[index] && ( 
-                  <img
+                  <Image
                     src={iconPreviews.job_holder[index]} 
                     alt={`Icon Preview ${index + 1}`} 
-                    className="w-8 h-8 object-cover"
+                    width={40}
+                    height={40}
+                    className="object-cover"
                   />
                 )}
                 <label htmlFor={`job_holder.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
@@ -564,7 +584,9 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   <img
                     src={iconPreviews.other_documents[index]} 
                     alt={`Icon Preview ${index + 1}`} 
-                    className="w-8 h-8 object-cover"
+                    width={40}
+                    height={40}
+                    className="object-cover"
                   />
                 )}
                 <label htmlFor={`other_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">

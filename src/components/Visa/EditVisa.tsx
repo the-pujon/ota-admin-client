@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FileInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
-import Image from "next/image";
 import { FaTimes } from "react-icons/fa";
 import { deleteMedia } from "@/redux/api/deleteImageApi";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 
 interface EditVisaProps {
