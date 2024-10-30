@@ -280,7 +280,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
  
  
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/visa/addVisaInfo', formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/addVisaInfo`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

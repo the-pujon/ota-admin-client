@@ -13,6 +13,7 @@ import Pagination from "../Pagination";
 interface PaymentData {
   tran_id: string;
   amount: string;
+  status: string;
   cus_name: string;
   cus_email: string;
   cus_phone: string;
@@ -76,6 +77,9 @@ const PaymentList = () => {
               <th className="min-w-[20px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                 Amount
               </th>
+              <th className="min-w-[20px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+                Status
+              </th>
               <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
                 Email
               </th>
@@ -108,6 +112,24 @@ const PaymentList = () => {
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {paymentItem.amount}
+                  </h5>
+                </td>
+                <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
+                  <h5 className="font-medium text-black dark:text-white">
+                    <span
+                      className={`
+                        text-sm font-medium me-2 px-2.5 py-0.5 rounded 
+                        ${
+                          paymentItem.status === 'success'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                            : paymentItem.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                            : 'bg-red -100 text-white -800 dark:bg-red-900 dark:text-white-300'
+                        }
+                      `}
+                    >
+                      {paymentItem.status}
+                    </span>
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">

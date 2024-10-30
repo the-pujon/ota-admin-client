@@ -38,7 +38,7 @@ interface VisaRequirements {
 }
 
 const fetchVisaData = async (countryName: string) => {
-  const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
   if (response.status !== 200) {
     throw new Error('Failed to fetch visa info');
   }

@@ -63,7 +63,7 @@ const ListVisa = () => {
     if (!deleteCountryName) return;
 
     try {
-      await axios.delete(`http://localhost:4000/api/v1/visa/${deleteCountryName}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${deleteCountryName}`);
       setVisaData(visaData.filter((visaItem) => visaItem.visaInfo.countryName !== deleteCountryName));
       toast.success("Visa information deleted successfully.");
     } catch (error) {
