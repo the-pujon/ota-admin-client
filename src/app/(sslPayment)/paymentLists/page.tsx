@@ -2,19 +2,19 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import useRedirectHelper from "@/utils/authRedirectHelper";
-import ListVisa from "@/components/Visa/ListVisa";
+import PaymentList from "@/components/SSLPayment/paymentLists";
 
-const Page = () => {
-  useRedirectHelper("/listVisa");
+const PaymentLists = () => {
+  useRedirectHelper("/paymentLists");
  
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
-        <Breadcrumb pageName="Visa List" />
-        <ListVisa />
+        <Breadcrumb pageName="Payment List" />
+        <PaymentList />
       </div>
     </DefaultLayout>
   );
 };
-export default Page;
 
+export default PaymentLists;

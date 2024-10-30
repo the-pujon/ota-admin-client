@@ -1,3 +1,4 @@
+"use client";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -271,7 +272,7 @@ const [iconPreviews, setIconPreviews] = useState<{
     }
   
     try {
-      const response = await axios.put(`http://localhost:4000/api/v1/visa/${visaInfo.countryName}`, formDataToSend, {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${visaInfo.countryName}`, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

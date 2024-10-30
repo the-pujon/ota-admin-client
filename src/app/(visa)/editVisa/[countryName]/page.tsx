@@ -1,12 +1,10 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import VisaDetail from "@/components/Visa/VisaDetail";
 import axios from "axios";
 import EditVisa from "@/components/Visa/EditVisa";
-
 
 interface VisaInfo {
   countryName: string;
@@ -22,21 +20,22 @@ interface VisaInfo {
   locationImages: { image: string; location: string }[];
   note: { text: string }[];
 }
-
+ 
 interface VisaRequirementCategory {
   title: string;
   details: string[];
   icon: string;
 }
-
+ 
 interface VisaRequirements {
+  VisaInfo:string;
+  VisaRequirementCategory:string;
   general_documents: VisaRequirementCategory[];
   business_person: VisaRequirementCategory[];
   student: VisaRequirementCategory[];
   job_holder: VisaRequirementCategory[];
   other_documents: VisaRequirementCategory[];
 }
-
 
 const fetchVisaData = async (countryName: string) => {
   const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
@@ -45,15 +44,15 @@ const fetchVisaData = async (countryName: string) => {
   }
   return response.data.data;
 };
-
-
-const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
+ 
+ 
+// const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
+export default function VisaPageEdit({ params }:any) {
   const { countryName } = params;
-  
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+ 
   useEffect(() => {
     const getVisaData = async () => {
       try {
@@ -65,10 +64,9 @@ const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
         setError("Error fetching visa information. Please try again later.");
       }
     };
-
     getVisaData();
   }, [countryName]);
-
+ 
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
@@ -85,4 +83,3 @@ const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
   );
 };
 
-export default VisaPageEdit;

@@ -9,6 +9,7 @@ export interface CustomButtonProps {
     icon?: React.ReactNode;
     rightIcon?: string;
     handleClick?: MouseEventHandler<HTMLButtonElement>;
+    style?: React.CSSProperties;
   }
   export interface InavLink {
     id: number;

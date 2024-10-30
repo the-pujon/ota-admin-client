@@ -46,7 +46,9 @@ const Login = () => {
       else if (res?.data?.user?.role === 'admin' && res?.data?.accessToken) { 
         router.push("/dashboard");
         // setLoading(false);
-        dispatch(signInSuccess(res?.data?.user));
+        const { _id, name, email, role } = res.data.user;
+        const userData = { _id, name, email, role };
+        dispatch(signInSuccess(userData));
         successToast(res?.message)
       }
          storeUserInfo({ accessToken: res?.data?.accessToken });

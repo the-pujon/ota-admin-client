@@ -7,7 +7,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import toast from "react-hot-toast";
-
+ 
 interface FormData {
   countryName: string;
   customId: string; 
@@ -22,7 +22,7 @@ interface FormData {
   bank_time: string; 
   embassy_address: string;
   note: { text?: string }[]; 
-
+ 
   general_documents: {
     icon: File;
     title: string;
@@ -52,8 +52,8 @@ interface FormData {
   visaPrice_price: string; 
   visaPrice_note: string; 
 }
-
-
+ 
+ 
 export default function AddVisa() {
   const methods = useForm<FormData>({
     defaultValues: {
@@ -80,40 +80,40 @@ export default function AddVisa() {
       visaPrice_note: '',
     },
   });
-
+ 
   const { control, handleSubmit, setValue, reset, formState: { errors } } = methods;
-
+ 
   const { fields: noteFields, append: appendNote, remove: removeNote } = useFieldArray({
     control,
     name: 'note',
   });
-
+ 
   const { fields: generalDocumentsFields, append: appendGeneralDocument } = useFieldArray({
     control,
     name: 'general_documents',
   });
-
+ 
   const { fields: businessPersonFields, append: appendBusinessDocument } = useFieldArray({
     control,
     name: 'business_person',
   });
-
+ 
   const { fields: studentFields, append: appendStudentDocument } = useFieldArray({
     control,
     name: 'student',
   });
-
+ 
   const { fields: jobHolderFields, append: appendJobHolderDocument } = useFieldArray({
     control,
     name: 'job_holder',
   });
-
+ 
   const { fields: otherDocumentsFields, append: appendOtherDocument } = useFieldArray({
     control,
     name: 'other_documents',
   });
-
-
+ 
+ 
 const [iconPreviews, setIconPreviews] = useState<{
   general_documents: { [key: number]: string };
   business_person: { [key: number]: string };
@@ -127,7 +127,7 @@ const [iconPreviews, setIconPreviews] = useState<{
   job_holder: {},
   other_documents: {},
 });
-
+ 
 const handleFileUpload = (
   fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents",
   index: number,
@@ -140,7 +140,7 @@ const handleFileUpload = (
     if (newIconPreviews[fieldName][index]) {
       URL.revokeObjectURL(newIconPreviews[fieldName][index]);
     }
-
+ 
     newIconPreviews[fieldName] = {
       ...newIconPreviews[fieldName],
       [index]: URL.createObjectURL(file),
@@ -149,9 +149,9 @@ const handleFileUpload = (
     methods.setValue(`${fieldName}.${index}.icon`, file);
   }
 };
-
+ 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
+ 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -161,16 +161,16 @@ const handleFileUpload = (
       setValue('images', fileArray);
     }
   };
-
-
+ 
+ 
   const { fields: locationImageFields, append: appendLocation, remove: removeLocation } = useFieldArray({
     control,
     name: "locationImages",
   });
-
+ 
   const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>([]);
-
-
+ 
+ 
   const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -181,15 +181,15 @@ const handleFileUpload = (
       setValue(`locationImages.${index}.image`, fileArray[0]);
     }
   };
-
-
-
+ 
+ 
+ 
   const handleCKEditorChange = (index: number, fieldName: "note", data: string) => {
     const plainText = data.replace(/<\/?[^>]+(>|$)/g, "");
     setValue(`note.${index}.text` as const, plainText);
   };
-
-
+ 
+ 
   const handleDetailsCKEditorChange = (
     fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents", 
     index: number,
@@ -200,85 +200,85 @@ const handleFileUpload = (
     const path = `${fieldName}.${index}.details.${detailIndex}` as const;
     setValue(path, plainText);
   };
-  
-
-
+ 
+ 
+ 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-  
+ 
     const formData = new FormData();
-
+ 
     formData.append('countryName', data.countryName);
     formData.append('customId', data.customId);
     formData.append('title', data.title);
     formData.append('subtitle', data.subtitle);
     formData.append('description', data.description);
-
+ 
     data.locationImages.forEach((item) => {
       formData.append('locationImages', item.image);  
       formData.append(`location_${item.image.name}`, item.location);  
     });
-    
+ 
     data.images.forEach((image) => {
       formData.append('images', image);
     });
-  
-
+ 
+ 
     formData.append('capital', data.capital);
     formData.append('time', data.time);
     formData.append('telephone_code', data.telephone_code);
     formData.append('bank_time', data.bank_time);
     formData.append('embassy_address', data.embassy_address);
-
+ 
 data.note.forEach((note, index) => {
   formData.append(`note[${index}][text]`, note.text || ''); 
 });
-
+ 
 formData.append('general_documents', JSON.stringify(data.general_documents));
 formData.append('business_person', JSON.stringify(data.business_person));
 formData.append('student', JSON.stringify(data.student));
 formData.append('job_holder', JSON.stringify(data.job_holder));
 formData.append('other_documents', JSON.stringify(data.other_documents));
-
+ 
   data.general_documents.forEach((doc, index) => {
     formData.append(`general_documents[${index}].title`, doc.title);
     formData.append(`general_documents[${index}].details`, JSON.stringify(doc.details));
     formData.append(`general_documents[${index}].icon`, doc.icon); 
   });
-
+ 
   data.business_person.forEach((doc, index) => {
     formData.append(`business_person[${index}].title`, doc.title);
     formData.append(`business_person[${index}].details`, JSON.stringify(doc.details));
     formData.append(`business_person[${index}].icon`, doc.icon); 
   });
-
+ 
   data.student.forEach((doc, index) => {
     formData.append(`student[${index}].title`, doc.title);
     formData.append(`student[${index}].details`, JSON.stringify(doc.details));
     formData.append(`student[${index}].icon`, doc.icon); 
   });
-
-
+ 
+ 
   data.job_holder.forEach((doc, index) => {
     formData.append(`job_holder[${index}].title`, doc.title);
     formData.append(`job_holder[${index}].details`, JSON.stringify(doc.details));
     formData.append(`job_holder[${index}].icon`, doc.icon);
   });
-
-
+ 
+ 
   data.other_documents.forEach((doc, index) => {
     formData.append(`other_documents[${index}].title`, doc.title);
     formData.append(`other_documents[${index}].details`, JSON.stringify(doc.details));
     formData.append(`other_documents[${index}].icon`, doc.icon); 
   });
-
+ 
     formData.append('visaPrice_mainText', data.visaPrice_mainText);
     formData.append('visaPrice_price', data.visaPrice_price);
     formData.append('visaPrice_note', data.visaPrice_note);
-
-
+ 
+ 
     console.log(formData, "formData");
-    
-
+ 
+ 
     try {
       const response = await axios.post('http://localhost:4000/api/v1/visa/addVisaInfo', formData, {
         headers: {
@@ -294,19 +294,19 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
       console.error('Error uploading content', error);
     }
   };
-
+ 
   return (
     <>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-boxdark shadow-md rounded-md p-8 space-y-8" encType="multipart/form-data" >
-
+ 
           <div className="grid grid-cols-2 gap-8">
             <TextInput name="countryName" label="Country Name" />
             <TextInput name="title" label="Title" />
             <TextInput name="subtitle" label="subtitle" />
             <TextInput name="description" label="Description" type="textarea" />
           </div>
-
+ 
         <h3 className="text-lg font-semibold text-gray-700">Location Image Upload</h3>
         <div className="grid grid-cols-2 gap-4">
           {locationImageFields.map((field, index) => (
@@ -334,14 +334,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             </div>
           ))}
         </div>
-
+ 
            <Button
             btnType="button"
             containerStyles="bg-teal_blue text-white rounded-lg px-4 py-2"
             title="Add Another Image"
             handleClick={() => appendLocation({ image: {} as File, location: "" })}
            />
-
+ 
           <h3 className="text-lg font-semibold text-gray-700">General Information Images Upload</h3>
           <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} />
           <div className="flex space-x-4">
@@ -349,7 +349,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               <img key={index} src={preview} alt={`Preview ${index}`} className="w-24 h-24 object-cover" />
             ))}
           </div>
-
+ 
           <h3 className="text-lg font-semibold text-gray-700">General Information</h3>
           <div className="grid grid-cols-2 gap-8">
             <TextInput name="capital" label="Capital" />
@@ -358,8 +358,8 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             <TextInput name="bank_time" label="Bank Time" />
             <TextInput type="textarea" name="embassy_address" label="Embassy Address" />
           </div>
-
-          
+ 
+ 
           <h3 className="text-lg font-semibold text-gray-700">Notes</h3>
           {noteFields.map((item, index) => (
             <div key={item.id} className="flex space-x-4">
@@ -383,16 +383,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
           </div>
             </div>
           ))}
-
+ 
             <Button
             btnType="button"
             containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
             title="Add Another Note"
             handleClick={() => appendNote({ text: "" })}
           />
-
+ 
         <h3 className="text-lg font-semibold text-gray-700">Visa Requirements</h3>
-
+ 
             <div>
             <h4 className="font-semibold">General Documents</h4>
             {generalDocumentsFields.map((field, index) => (
@@ -431,7 +431,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               handleClick={() => appendGeneralDocument({ title: "", details: [""], icon: {} as File })}
             />
           </div>
-          
+ 
           <div>
             <h4 className="font-semibold">Business Person Documents</h4>
             {businessPersonFields.map((field, index) => (
@@ -470,7 +470,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               handleClick={() => appendBusinessDocument({ title: "", details: [""], icon: {} as File })}
             />
           </div>
-          
+ 
           <div>
             <h4 className="font-semibold">Student Documents</h4>
             {studentFields.map((field, index) => (
@@ -509,7 +509,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               handleClick={() => appendStudentDocument({ title: "", details: [""], icon: {} as File })}
             />
           </div>
-          
+ 
           <div>
             <h4 className="font-semibold">Job Holder Documents</h4>
             {jobHolderFields.map((field, index) => (
@@ -548,7 +548,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               handleClick={() => appendJobHolderDocument({ title: "", details: [""], icon: {} as File })}
             />
           </div>
-          
+ 
           <div>
             <h4 className="font-semibold">Other Documents</h4>
             {otherDocumentsFields.map((field, index) => (
@@ -593,7 +593,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             <TextInput name="visaPrice_price" label="Price" />
             <TextInput name="visaPrice_note" label="Note" />
           </div>
-                            
+ 
            <div className="flex justify-center mt-8">
             <Button
               btnType="submit"
