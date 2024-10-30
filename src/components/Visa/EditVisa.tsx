@@ -333,14 +333,14 @@ const [iconPreviews, setIconPreviews] = useState<{
             )}
 
             <TextInput name={`locationImages.${index}.location`} label="Location Name" />
-            {locationImageFields.length > 1 && (
+            {/* {locationImageFields.length > 1 && (
               <Button
               btnType="button"
               containerStyles="px-4 py-2 bg-red text-white rounded"
               title="Remove"
               handleClick={() => handleDeleteMedia(field.id, field.image, field.location, index)}
              />
-            )}
+            )} */}
           </div>
         ))}
       </div>

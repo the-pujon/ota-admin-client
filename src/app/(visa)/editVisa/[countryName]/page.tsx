@@ -1,17 +1,10 @@
-// src/app/(visa)/editVisa/[countryName]/page.tsx
-
+"use client";
+import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import ClientEditVisaWrapper from "@/components/Visa/ClientEditVisaWrapper";
+import VisaDetail from "@/components/Visa/VisaDetail";
 import axios from "axios";
-
-// Metadata function that awaits params
-export async function generateMetadata({ params }: { params: Promise<{ countryName: string[] }> }) {
-  const { countryName } = await params; 
-  return {
-    title: `Edit Visa for ${countryName}`,
-  };
-}
+import EditVisa from "@/components/Visa/EditVisa";
 
 interface VisaInfo {
   countryName: string;
@@ -27,14 +20,16 @@ interface VisaInfo {
   locationImages: { image: string; location: string }[];
   note: { text: string }[];
 }
-
+ 
 interface VisaRequirementCategory {
   title: string;
   details: string[];
   icon: string;
 }
-
+ 
 interface VisaRequirements {
+  VisaInfo:string;
+  VisaRequirementCategory:string;
   general_documents: VisaRequirementCategory[];
   business_person: VisaRequirementCategory[];
   student: VisaRequirementCategory[];
@@ -42,32 +37,49 @@ interface VisaRequirements {
   other_documents: VisaRequirementCategory[];
 }
 
-// Async function to fetch visa data
-async function fetchVisaData(countryName: string) {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
+const fetchVisaData = async (countryName: string) => {
+  const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
   if (response.status !== 200) {
-    throw new Error("Failed to fetch visa info");
+    throw new Error('Failed to fetch visa info');
   }
   return response.data.data;
-}
-
-// Main component with async params handling
-export default async function VisaPageEdit({ params }: { params: Promise<{ countryName: string }> }) {
-  const { countryName } = await params; // Await the resolved params
-
-  // Fetch visa data
-  const { visaInfo, visaRequirements } = await fetchVisaData(countryName);
-
+};
+ 
+ 
+// const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
+export default function VisaPageEdit({ params }:any) {
+  const { countryName } = params;
+  const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
+  const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
+  const [error, setError] = useState<string | null>(null);
+ 
+  useEffect(() => {
+    const getVisaData = async () => {
+      try {
+        const { visaInfo, visaRequirements } = await fetchVisaData(countryName);
+        setVisaInfo(visaInfo);
+        setVisaRequirements(visaRequirements);
+      } catch (error) {
+        console.error("Error fetching visa data:", error);
+        setError("Error fetching visa information. Please try again later.");
+      }
+    };
+    getVisaData();
+  }, [countryName]);
+ 
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
         <Breadcrumb pageName={`Edit Visa for ${countryName}`} />
-        {visaInfo && visaRequirements ? (
-          <ClientEditVisaWrapper visaInfo={visaInfo} visaRequirements={visaRequirements} />
+        {error ? (
+          <div>{error}</div>
+        ) : visaInfo && visaRequirements ? (
+          <EditVisa visaInfo={visaInfo} visaRequirements={visaRequirements} />
         ) : (
           <div>Loading...</div>
         )}
       </div>
     </DefaultLayout>
   );
-}
+};
+

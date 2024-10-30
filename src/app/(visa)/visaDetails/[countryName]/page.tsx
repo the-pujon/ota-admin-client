@@ -46,7 +46,8 @@ const fetchVisaData = async (countryName: string) => {
 };
 
 
-const VisaPage = ({ params }: { params: { countryName: string } }) => {
+// const VisaPage = ({ params }: { params: { countryName: string } }) => {
+const VisaPage = ({ params }: any) => {
   const { countryName } = params;
   
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
