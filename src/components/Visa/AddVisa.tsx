@@ -1,9 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useForm, FormProvider, SubmitHandler, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+// import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+const CKEditor = dynamic(() => import("@ckeditor/ckeditor5-react").then((mod) => mod.CKEditor), { ssr: false });
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
+// In the main function/component
+// const [isClient, setIsClient] = useState(false);
+
+// useEffect(() => {
+//   setIsClient(true); // Set to true only on the client side
+// }, []);
+
+
+
+// import { CKEditor } from "@ckeditor/ckeditor5-react";
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import Image from "next/image";
@@ -54,6 +69,12 @@ interface FormData {
 }
 
 export default function AddVisa() {
+  const [isClient, setIsClient] = useState(false);
+
+useEffect(() => {
+  setIsClient(true); // Set to true only on the client side
+}, []);
+
   const methods = useForm<FormData>({
     defaultValues: {
       locationImages: [{ image: {} as File, location: "" }],
@@ -360,14 +381,18 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
           <h3 className="text-lg font-semibold text-gray-700">Notes</h3>
           {noteFields.map((item, index) => (
             <div key={item.id} className="flex space-x-4">
+              {isClient && (
               <CKEditor
                 editor={ClassicEditor}
                 data=""
                 onChange={(event, editor) => {
                   const data = editor.getData();
                   handleCKEditorChange(index, "note", data);
+
                 }}
               />
+            )}
+
              <div className="mt-12">
               {noteFields.length > 1 && (
                 <Button
@@ -411,14 +436,17 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`general_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
+{isClient && (
                 <CKEditor
                   editor={ClassicEditor}
                   data={methods.getValues(`general_documents.${index}.details.0`) || ""}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     handleDetailsCKEditorChange("general_documents", index, 0, data);
-                  }}
-                />
+                    }}
+  />
+)}
+
               </div>
             ))}
             <Button
@@ -450,14 +478,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`business_person.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
+                {isClient && (
                 <CKEditor
                   editor={ClassicEditor}
                   data={methods.getValues(`business_person.${index}.details.0`) || ""}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     handleDetailsCKEditorChange("business_person", index, 0, data);
-                  }}
-                />
+                    }}
+  />
+)}
               </div>
             ))}
             <Button
@@ -489,14 +519,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`student.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
+                {isClient && (
                 <CKEditor
                   editor={ClassicEditor}
                   data={methods.getValues(`student.${index}.details.0`) || ""}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     handleDetailsCKEditorChange("student", index, 0, data);
-                  }}
-                />
+                     }}
+  />
+)}
               </div>
             ))}
             <Button
@@ -528,14 +560,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`job_holder.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
+                {isClient && (
                 <CKEditor
                   editor={ClassicEditor}
                   data={methods.getValues(`job_holder.${index}.details.0`) || ""}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     handleDetailsCKEditorChange("job_holder", index, 0, data);
-                  }}
-                />
+                     }}
+  />
+)}
               </div>
             ))}
             <Button
@@ -567,14 +601,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`other_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
+                {isClient && (
                 <CKEditor
                   editor={ClassicEditor}
                   data={methods.getValues(`other_documents.${index}.details.0`) || ""}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     handleDetailsCKEditorChange("other_documents", index, 0, data);
-                  }}
-                />
+                    }}
+  />
+)}
               </div>
             ))}
             <Button

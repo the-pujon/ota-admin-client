@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Pagination from "../Pagination";
 
 // interface PaymentInfo {
 //   cus_name: string;
@@ -21,36 +22,41 @@ const PaymentList = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [selectedpaymentInfo, setSelectedpaymentInfo] = useState<any | null>(null);
   // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const router = useRouter();
 
   const fetchPaymentData = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/v1/ssl/paymentList");
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/ssl/paymentList`);
       setPaymentData(response.data.data);
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
   };
 
-  const handleViewClick = async (cus_name: string) => {
-    try {
-      console.log("view")
-      return;
-      const response = await axios.get(`http://localhost:4000/api/v1/visa/${cus_name}`);
-      setSelectedpaymentInfo(response.data.data);
-      router.push(`/visaDetails/${cus_name}`);
-      console.log(response.data, "country")
-      // setIsModalOpen(true);
+  // const handleViewClick = async (cus_name: string) => {
+  //   try {
+  //     console.log("view")
+  //     return;
+  //     const response = await axios.get(`http://localhost:4000/api/v1/visa/${cus_name}`);
+  //     setSelectedpaymentInfo(response.data.data);
+  //     router.push(`/visaDetails/${cus_name}`);
+  //     console.log(response.data, "country")
+  //     // setIsModalOpen(true);
 
-    } catch (error) {
-      console.error("Error fetching payment info:", error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error fetching payment info:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchPaymentData();
   }, []);
-
+ const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = paymentData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(paymentData.length / itemsPerPage);
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -82,7 +88,7 @@ const PaymentList = () => {
             </tr>
           </thead>
           <tbody>
-            {paymentData.map((paymentItem, key) => (
+            {currentItems.map((paymentItem, key) => (
               <tr key={key}>
                 <td className="border-b border-[#eee] dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
@@ -129,6 +135,11 @@ const PaymentList = () => {
             ))}
           </tbody>
         </table>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </div>
   );

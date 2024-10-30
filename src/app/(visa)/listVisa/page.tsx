@@ -2,9 +2,9 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import useRedirectHelper from "@/utils/authRedirectHelper";
-// import ListVisa from "@/components/Visa/ListVisa";
+import ListVisa from "@/components/Visa/ListVisa";
 
-const ListVisa = () => {
+const ListOfVisa = () => {
   useRedirectHelper("/listVisa");
  
   return (
@@ -17,4 +17,4 @@ const ListVisa = () => {
   );
 };
 
-export default ListVisa;
+export default ListOfVisa;

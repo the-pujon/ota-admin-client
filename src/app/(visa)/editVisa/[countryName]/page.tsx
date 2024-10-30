@@ -36,10 +36,14 @@ interface VisaRequirements {
   job_holder: VisaRequirementCategory[];
   other_documents: VisaRequirementCategory[];
 }
-
+interface VisaPageEditProps {
+  params: {
+    countryName: string;
+  };
+}
 
 const fetchVisaData = async (countryName: string) => {
-  const response = await axios.get(`http://localhost:4000/api/v1/visa/${countryName}`);
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
   if (response.status !== 200) {
     throw new Error('Failed to fetch visa info');
   }
@@ -47,9 +51,47 @@ const fetchVisaData = async (countryName: string) => {
 };
 
 
-const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
-  const { countryName } = params;
+// const VisaPageEdit = ({ params }: { params: { countryName: string } }) => {
+//   const { countryName } = params;
   
+//   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
+//   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const getVisaData = async () => {
+//       try {
+//         const { visaInfo, visaRequirements } = await fetchVisaData(countryName);
+//         setVisaInfo(visaInfo);
+//         setVisaRequirements(visaRequirements);
+//       } catch (error) {
+//         console.error("Error fetching visa data:", error);
+//         setError("Error fetching visa information. Please try again later.");
+//       }
+//     };
+
+//     getVisaData();
+//   }, [countryName]);
+
+//   return (
+//     <DefaultLayout>
+//       <div className="flex flex-col gap-10">
+//         <Breadcrumb pageName={`Edit Visa for ${countryName}`} />
+//         {error ? (
+//           <div>{error}</div>
+//         ) : visaInfo && visaRequirements ? (
+//           <EditVisa visaInfo={visaInfo} visaRequirements={visaRequirements} />
+//         ) : (
+//           <div>Loading...</div>
+//         )}
+//       </div>
+//     </DefaultLayout>
+//   );
+// };
+
+const VisaPageEdit: React.FC<VisaPageEditProps> = ({ params }) => {
+  const { countryName } = params;
+
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
   const [error, setError] = useState<string | null>(null);
