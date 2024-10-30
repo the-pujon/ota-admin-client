@@ -158,7 +158,7 @@ const [iconPreviews, setIconPreviews] = useState<{
         setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
       } else if (mediaType === 'icon') {
         const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
-        // Ensure categoryIcons is an array
+
         if (Array.isArray(categoryIcons)) {
           setIconPreviews((prev) => ({
             ...prev,
@@ -167,7 +167,7 @@ const [iconPreviews, setIconPreviews] = useState<{
         }
       }
     } catch (error) {
-      alert("Failed to delete media");
+      toast.error("Failed to delete visa image.");
     }
   };
   
@@ -332,14 +332,14 @@ const [iconPreviews, setIconPreviews] = useState<{
             )}
 
             <TextInput name={`locationImages.${index}.location`} label="Location Name" />
-            {locationImageFields.length > 1 && (
+            {/* {locationImageFields.length > 1 && (
               <Button
               btnType="button"
               containerStyles="px-4 py-2 bg-red text-white rounded"
               title="Remove"
               handleClick={() => handleDeleteMedia(field.id, field.image, field.location, index)}
              />
-            )}
+            )} */}
           </div>
         ))}
       </div>
