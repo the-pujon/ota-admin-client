@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useController, UseControllerProps } from "react-hook-form";
+
 
 
 interface InputProps {
@@ -38,6 +38,7 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
           <textarea
             id={name}
             {...register(name)}
+            defaultValue={name}
             className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             rows={4}
           />
@@ -52,7 +53,7 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
         )}
   
         {errors[name] && (
-          <span className="text-red-600 text-sm">{(errors[name] as any).message}</span>
+          <span className="text-red text-sm">{(errors[name] as any).message}</span>
         )}
       </div>
     );

@@ -5,8 +5,10 @@ import axios from "axios";
 import { FileInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import Image from "next/image";
-import { Console } from "console";
 import { FaTimes } from "react-icons/fa";
+import { deleteMedia } from "@/redux/api/deleteImageApi";
+import toast from "react-hot-toast";
+
 
 interface EditVisaProps {
   visaInfo: any;
@@ -38,6 +40,7 @@ const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
       visaPrice_note: "",
     },
   });
+ 
 
   const { handleSubmit, reset, control, setValue } = methods;
 
@@ -55,6 +58,9 @@ const [iconPreviews, setIconPreviews] = useState<{
   job_holder: {},
   other_documents: {},
 });
+
+
+
 
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -77,21 +83,6 @@ const [iconPreviews, setIconPreviews] = useState<{
 
   const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>([]);
 
-
-  // const handleLocationImageChange = (index:any, event:any) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       const newPreviews:any = [...locationImagePreviews];
-  //       newPreviews[index] = reader.result; 
-  //       setLocationImagePreviews(newPreviews);
-  //     };
-  //     reader.readAsDataURL(file);
-      
-  //   }
-  // };
-  
   
   const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -156,6 +147,31 @@ const [iconPreviews, setIconPreviews] = useState<{
       methods.setValue(`${fieldName}.${index}.icon`, file);
     }
   };
+  
+  
+  const handleDeleteMedia = async ( countryId: string, mediaType: string, publicId: number, index: number) => {
+    try {
+      await deleteMedia({ countryId, mediaType, publicId });
+  
+      if (mediaType === 'images') {
+        setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+      } else if (mediaType === 'locationImages') {
+        setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+      } else if (mediaType === 'icon') {
+        const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
+        // Ensure categoryIcons is an array
+        if (Array.isArray(categoryIcons)) {
+          setIconPreviews((prev) => ({
+            ...prev,
+            [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
+          }));
+        }
+      }
+    } catch (error) {
+      alert("Failed to delete media");
+    }
+  };
+  
 
   useEffect(() => {
     if (visaInfo && visaRequirements) {
@@ -261,11 +277,14 @@ const [iconPreviews, setIconPreviews] = useState<{
           "Content-Type": "multipart/form-data",
         },
       });
+      toast.success("Content updated successfully!");
       console.log("Visa updated successfully:", response.data);
     } catch (error) {
+      toast.error("Something Going Wrong!");
       console.error("Error updating visa:", error);
     }
   };
+  
 
 
   const removeImage = (index: number) => {
@@ -319,7 +338,7 @@ const [iconPreviews, setIconPreviews] = useState<{
               btnType="button"
               containerStyles="px-4 py-2 bg-red text-white rounded"
               title="Remove"
-              handleClick={() => removeLocation(index)}
+              handleClick={() => handleDeleteMedia(field.id, field.image, field.location, index)}
              />
             )}
           </div>
@@ -516,7 +535,7 @@ const [iconPreviews, setIconPreviews] = useState<{
 
             <TextInput
              name={`job_holder[${index}].title`}
-             label="General Document Title"
+             label="Job Holder Document Title"
              />
 
             {field.details.map((detail: string, detailIndex: number) => (

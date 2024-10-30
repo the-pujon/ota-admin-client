@@ -71,7 +71,7 @@ const VisaPage = ({ params }: { params: { countryName: string } }) => {
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
-        <Breadcrumb pageName={`Visa Details for ${countryName}`} />
+        <Breadcrumb pageName={`Visa List / Visa Details for ${countryName}`} />
         {error ? (
           <div>{error}</div>
         ) : visaInfo && visaRequirements ? (

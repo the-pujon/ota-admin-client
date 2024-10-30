@@ -4,7 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 import ListVisa from "@/components/Visa/ListVisa";
 
-const ListOfVisa = () => {
+const Page = () => {
   useRedirectHelper("/listVisa");
  
   return (
@@ -16,5 +16,5 @@ const ListOfVisa = () => {
     </DefaultLayout>
   );
 };
+export default Page;
 
-export default ListOfVisa;

@@ -3,6 +3,9 @@ import axios from "axios";
 import { FaEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Pagination from "../Pagination";
+import ConfirmationModal from "../ConfirmationModal";
+import toast from "react-hot-toast";
+
 
 interface VisaData {
   visaInfo: any;
@@ -11,10 +14,12 @@ interface VisaData {
   visaPrice_note: string;
 }
 
+
 const ListVisa = () => {
   const [visaData, setVisaData] = useState<VisaData[]>([]);
-  const [selectedVisaInfo, setSelectedVisaInfo] = useState<any | null>(null);
+  const [selectedVisaInfo, setSelectedVisaInfo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteCountryName, setDeleteCountryName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
   const router = useRouter();
@@ -49,17 +54,24 @@ const ListVisa = () => {
     }
   };
 
-  const handleDeleteClick = async (countryName: string) => {
-    const confirmDelete = window.confirm(`Are you sure you want to delete the visa information for ${countryName}?`);
-    if (confirmDelete) {
-      try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
-        setVisaData(visaData.filter((visaItem) => visaItem.visaInfo.countryName !== countryName));
-        alert("Visa information deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting visa info:", error);
-        alert("Failed to delete visa information.");
-      }
+  const handleDeleteClick = (countryName: string) => {
+    setDeleteCountryName(countryName);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteCountryName) return;
+
+    try {
+      await axios.delete(`http://localhost:4000/api/v1/visa/${deleteCountryName}`);
+      setVisaData(visaData.filter((visaItem) => visaItem.visaInfo.countryName !== deleteCountryName));
+      toast.success("Visa information deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting visa info:", error);
+      toast.error("Failed to delete visa information.");
+    } finally {
+      setIsModalOpen(false); 
+      setDeleteCountryName(null);
     }
   };
 
@@ -67,11 +79,12 @@ const ListVisa = () => {
     fetchVisaData();
   }, []);
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = visaData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(visaData.length / itemsPerPage);
+
+
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -132,6 +145,13 @@ const ListVisa = () => {
           onPageChange={(page) => setCurrentPage(page)}
         />
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        message={`Are you sure you want to delete the visa information for ${deleteCountryName}?`}
+        onConfirm={confirmDelete}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

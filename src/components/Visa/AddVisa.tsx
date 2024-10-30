@@ -21,7 +21,13 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
 import Button from "../CustomButton";
+
 import Image from "next/image";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+
 
 interface FormData {
   countryName: string;
@@ -68,6 +74,7 @@ interface FormData {
   visaPrice_note: string; 
 }
 
+
 export default function AddVisa() {
   const [isClient, setIsClient] = useState(false);
 
@@ -81,6 +88,7 @@ useEffect(() => {
       countryName: '',
       customId: '',
       title: '',
+      subtitle: '',
       description: '',
       images: [],
       capital: '',
@@ -203,7 +211,7 @@ const handleFileUpload = (
 
 
   const handleCKEditorChange = (index: number, fieldName: "note", data: string) => {
-    const plainText = data.replace(/<\/?[^>]+(>|$)/g, ""); // Strips HTML tags
+    const plainText = data.replace(/<\/?[^>]+(>|$)/g, "");
     setValue(`note.${index}.text` as const, plainText);
   };
 
@@ -222,7 +230,7 @@ const handleFileUpload = (
 
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-
+  
     const formData = new FormData();
 
     formData.append('countryName', data.countryName);
@@ -269,7 +277,6 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
     formData.append(`business_person[${index}].icon`, doc.icon); 
   });
 
-  // Append student
   data.student.forEach((doc, index) => {
     formData.append(`student[${index}].title`, doc.title);
     formData.append(`student[${index}].details`, JSON.stringify(doc.details));
@@ -305,10 +312,11 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
         },
       });
       console.log(response.data, "data")
-      alert('Content uploaded successfully!');
+      toast.success("Content uploaded successfully!");
       reset();
       setImagePreviews([]);
     } catch (error) {
+      toast.error("Something Going Wrong!");
       console.error('Error uploading content', error);
     }
   };
@@ -640,11 +648,3 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
     </>
   );
 }
-
-
-
-
-
-
-
-

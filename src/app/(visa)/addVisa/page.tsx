@@ -1,11 +1,12 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import useRedirectHelper from "@/utils/authRedirectHelper";
 import AddVisa from "@/components/Visa/AddVisa";
+import useRedirectHelper from "@/utils/authRedirectHelper";
 
-const AddVisas = () => {
+const Page = () => {
   useRedirectHelper("/addVisa");
+
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
@@ -16,36 +17,5 @@ const AddVisas = () => {
   );
 };
 
-export default AddVisas;
+export default Page;
 
-
-// "use client";
-// import { useEffect, useState } from "react";
-// import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-// import DefaultLayout from "@/components/Layouts/DefaultLayout";
-// import useRedirectHelper from "@/utils/authRedirectHelper";
-// import AddVisa from "@/components/Visa/AddVisa";
-
-// const AddVisas = () => {
-//   const { loading } = useRedirectHelper("/addVisa");
-//   const [isClient, setIsClient] = useState(false);
-
-//   useEffect(() => {
-//     setIsClient(true); 
-//   }, []);
-
-//   if (!isClient || loading) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//     <DefaultLayout>
-//       <div className="flex flex-col gap-10">
-//         <Breadcrumb pageName="Add Visa" />
-//         <AddVisa />
-//       </div>
-//     </DefaultLayout>
-//   );
-// };
-
-// export default AddVisas;
