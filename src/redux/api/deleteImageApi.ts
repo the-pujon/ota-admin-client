@@ -28,15 +28,17 @@
 import axios from 'axios';
 
 interface DeleteElement {
-    countryId: string; // The ID of the country
-    mediaType: any; // Specified media type
-    publicId: number; // Public ID of the media to delete
+    countryId: string; 
+    mediaType: any; 
+    publicId: number; 
 }
 
 export const deleteMedia = async ({ countryId, mediaType, publicId }: DeleteElement) => {
   try {
-    const response = await axios.delete('http://localhost:4000/api/v1/visa/deleteMedia', {
-      params: { // Use 'params' to send query parameters
+    
+    // const response = await axios.delete('http://localhost:4000/api/v1/visa/deleteMedia', {
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/deleteMedia`, {
+      params: { 
         countryId,
         mediaType,
         publicId
@@ -45,6 +47,6 @@ export const deleteMedia = async ({ countryId, mediaType, publicId }: DeleteElem
     return response.data; // Return the response data
   } catch (error) {
     console.error("Error deleting media:", error);
-    throw error; // Rethrow the error
+    throw error; 
   }
 };
