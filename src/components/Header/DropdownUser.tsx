@@ -16,7 +16,8 @@ const DropdownUser = () => {
   const signOut = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/auth/logout",
+        // "http://localhost:4000/api/v1/auth/logout",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`,
         {},
         {
           withCredentials: true,
