@@ -16,7 +16,7 @@ interface VisaInfo {
   visaPrice_note: string;
   description: string;
   images: string[];
-  locationImages: { image: string; location: string }[];
+  locationImages: { image: string; location: string,}[];
   note: { text: string }[];
 }
 

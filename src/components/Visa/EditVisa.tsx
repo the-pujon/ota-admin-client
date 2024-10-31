@@ -21,7 +21,7 @@ const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
       title: "",
       subtitle: "",
       description: "",
-      locationImages: [{ image: {} as File, location: "" }],
+      locationImages: [{ image: {} as File, location: "", }],
       images: [],
       capital: '',
       time: '',
@@ -141,10 +141,9 @@ const [iconPreviews, setIconPreviews] = useState<{
     }
   };
   
-  const handleDeleteMedia = async ( countryId: string, mediaType: string, publicId: number, index: number) => {
+  const handleDeleteMedia = async (countryId: string, mediaType: string, publicId: string, index: number, documentCategory?: string, documentTitle?: string, ) => {
     try {
-      await deleteMedia({ countryId, mediaType, publicId });
-  
+      await deleteMedia({ countryId, mediaType, publicId, documentCategory, documentTitle });
       if (mediaType === 'images') {
         setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
       } else if (mediaType === 'locationImages') {
@@ -160,10 +159,10 @@ const [iconPreviews, setIconPreviews] = useState<{
         }
       }
     } catch (error) {
-      toast.error("Failed to delete visa image.");
+      console.error("Failed to delete media:", error);
     }
   };
-  
+
   useEffect(() => {
     if (visaInfo && visaRequirements) {
       reset({
@@ -315,14 +314,19 @@ const [iconPreviews, setIconPreviews] = useState<{
             )}
 
             <TextInput name={`locationImages.${index}.location`} label="Location Name" />
-            {/* {locationImageFields.length > 1 && (
-              <Button
-              btnType="button"
-              containerStyles="px-4 py-2 bg-red text-white rounded"
-              title="Remove"
-              handleClick={() => handleDeleteMedia(field.id, field.image, field.location, index)}
-             />
-            )} */}
+            {locationImageFields.length > 1 && (
+            <Button
+            btnType="button"
+            containerStyles="px-4 py-2 bg-red text-white rounded"
+            title="Remove"
+            handleClick={() => handleDeleteMedia(
+                field.id,
+                'locationImages',
+                index,
+                field.image, 
+            )}
+            />
+            )} 
           </div>
         ))}
       </div>
