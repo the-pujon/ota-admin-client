@@ -581,7 +581,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                   onChange={(e) => handleFileUpload("other_documents", index, e)} 
                 />
                 {iconPreviews.other_documents[index] && ( 
-                  <img
+                  <Image
                     src={iconPreviews.other_documents[index]} 
                     alt={`Icon Preview ${index + 1}`} 
                     width={40}

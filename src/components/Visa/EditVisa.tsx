@@ -9,7 +9,6 @@ import { deleteMedia } from "@/redux/api/deleteImageApi";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
-
 interface EditVisaProps {
   visaInfo: any;
   visaRequirements: any;
@@ -41,9 +40,7 @@ const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
     },
   });
  
-
   const { handleSubmit, reset, control, setValue } = methods;
-
 
 const [iconPreviews, setIconPreviews] = useState<{
   general_documents: { [key: number]: string };
@@ -58,10 +55,6 @@ const [iconPreviews, setIconPreviews] = useState<{
   job_holder: {},
   other_documents: {},
 });
-
-
-
-
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -148,7 +141,6 @@ const [iconPreviews, setIconPreviews] = useState<{
     }
   };
   
-  
   const handleDeleteMedia = async ( countryId: string, mediaType: string, publicId: number, index: number) => {
     try {
       await deleteMedia({ countryId, mediaType, publicId });
@@ -172,7 +164,6 @@ const [iconPreviews, setIconPreviews] = useState<{
     }
   };
   
-
   useEffect(() => {
     if (visaInfo && visaRequirements) {
       reset({
@@ -218,11 +209,7 @@ const [iconPreviews, setIconPreviews] = useState<{
     };
   }, [imagePreviews, locationImagePreviews]);
 
-  console.log(locationImagePreviews, "locationImagePreviews");
-
-
   const onSubmit = async (formData: any) => {
-
     const formDataToSend = new FormData();
   
     formDataToSend.append("countryName", formData.countryName);
@@ -233,8 +220,8 @@ const [iconPreviews, setIconPreviews] = useState<{
     formDataToSend.append("visaPrice_price", formData.visaPrice_price);
     formDataToSend.append("visaPrice_note", formData.visaPrice_note);
   
-    if (formData.notes && Array.isArray(formData.notes)) {
-      formData.notes.forEach((note: any, index: number) => {
+    if (formData.note && Array.isArray(formData.note)) {
+      formData.note.forEach((note: any, index: number) => {
         formDataToSend.append(`note[${index}].text`, note.text);
       });
     }
@@ -285,8 +272,6 @@ const [iconPreviews, setIconPreviews] = useState<{
     }
   };
   
-
-
   const removeImage = (index: number) => {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
     setValue(
@@ -295,10 +280,7 @@ const [iconPreviews, setIconPreviews] = useState<{
     );
   };
 
-
-  
   return (
-
     <>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-boxdark shadow-md rounded-md p-8 space-y-8" encType="multipart/form-data" >
