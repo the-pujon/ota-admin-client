@@ -7,11 +7,25 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signOut_user } from "@/redux/slice/authSlice";
 import { errorToast, successToast, warningToast } from "@/components/Toast";
+import { CgProfile } from "react-icons/cg";
 
 const DropdownUser = () => {
   const router = useRouter();
-   const dispatch = useAppDispatch();
-  const { currentUser } = useAppSelector((state) => state.authUI);
+  const dispatch = useAppDispatch();
+  interface User {
+    name: string;
+    role: string;
+}
+interface AuthState {
+  currentUser: User | null; 
+}
+
+const initialState: AuthState = {
+  currentUser: null,
+};
+  // const { currentUser } = useAppSelector((state) => state.authUI);
+  const { currentUser } = useAppSelector((state: { authUI: AuthState }) => state.authUI);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const signOut = async () => {
     try {
@@ -26,7 +40,7 @@ const DropdownUser = () => {
 
       if (response) {
         dispatch(signOut_user());
-        successToast(response?.data?.message);0
+        successToast(response?.data?.message);
       }
     } catch (error) {
       console.error("hei..Error clearing cookie:", error);
@@ -46,13 +60,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+             {currentUser?.name || "Guest"}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{currentUser?.role || "No role"}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <Image
+          {/* <Image
             width={112}
             height={112}
             src={"/images/user/user-01.png"}
@@ -61,7 +75,8 @@ const DropdownUser = () => {
               height: "auto",
             }}
             alt="User"
-          />
+          /> */}
+          <CgProfile size={30} className="mt-2 ml-2" />
         </span>
 
         <svg
