@@ -115,7 +115,7 @@ const ListVisa = () => {
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  <p className="text-sm">${visaItem.visaInfo.visaPrice_price}</p>
+                  <p className="text-sm">৳{visaItem.visaInfo.visaPrice_price}</p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p className="text-black dark:text-white">
