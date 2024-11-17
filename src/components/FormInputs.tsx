@@ -40,11 +40,12 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
             {...register(name)}
             defaultValue={name}
             className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            rows={4}
+            rows={4} required
           />
         ) : (
           <input
             id={name}
+            required
             type={type}
             defaultValue={name}
             {...register(name)}
@@ -233,9 +234,5 @@ const FileInput: React.FC<FileInputProps> = ({ name, label, multiple = false, on
     </div>
   );
 };
-
-export default FileInput;
-
-
 
 export { TextInput, SelectInput, DateInput, FileInput };
