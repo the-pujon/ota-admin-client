@@ -137,28 +137,7 @@ const [iconPreviews, setIconPreviews] = useState<{
       methods.setValue(`${fieldName}.${index}.icon`, file);
     }
   };
-  // const handleDeleteMedia = async (countryId: string, mediaType: string, publicId: string, index: number, documentCategory?: string, documentTitle?: string, ) => {
-  //   try {
-  //     await deleteMedia({ countryId, mediaType, publicId, documentCategory, documentTitle });
-
-  //     if (mediaType === 'images') {
-  //       setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-  //     } else if (mediaType === 'locationImages') {
-  //       setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-  //     } else if (mediaType === 'icon') {
-  //       const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
-  //       if (Array.isArray(categoryIcons)) {
-  //         setIconPreviews((prev) => ({
-  //           ...prev,
-  //           [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
-  //         }));
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to delete media:", error);
-  //   }
-  // };
-  useEffect(() => {
+   useEffect(() => {
     if (visaInfo && visaRequirements) {
       reset({
         countryName: visaInfo.countryName,
@@ -265,13 +244,7 @@ const [iconPreviews, setIconPreviews] = useState<{
       console.error("Error updating visa:", error);
     }
   };
-  // const removeImage = (index: number) => {
-  //   setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  //   setValue(
-  //     'images',
-  //     methods.getValues('images').filter((_: any, i: number) => i !== index)
-  //   );
-  // };
+
   return (
     <>
     <FormProvider {...methods}>
