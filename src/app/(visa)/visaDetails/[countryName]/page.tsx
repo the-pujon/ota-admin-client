@@ -10,6 +10,7 @@ import axios from "axios";
 interface VisaInfo {
   countryName: string;
   subtitle: string;
+  visaType: string;
   capital: string;
   time: string;
   telephone_code: string;
