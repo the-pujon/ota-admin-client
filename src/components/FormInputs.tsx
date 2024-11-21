@@ -38,7 +38,7 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
           <textarea
             id={name}
             {...register(name)}
-            defaultValue={name}
+            // defaultValue={name}
             className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             rows={4} required
           />
@@ -47,7 +47,7 @@ const TextInput: React.FC<InputProps> = ({ name, label, type = 'text' }) => {
             id={name}
             required
             type={type}
-            defaultValue={name}
+            // defaultValue={name}
             {...register(name)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
