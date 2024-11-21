@@ -379,7 +379,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
             <TextInput
             type="textarea"
             name={`note.${index}.text`}
-            label="Notes"
+            label={`Notes ${index + 1}`}
             onChange={(e) => handleNoteChange(index, e.target.value)}
           />
 
