@@ -2,10 +2,9 @@
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FileInput, TextInput } from "../FormInputs";
+import { FileInput, SelectInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import { FaTimes } from "react-icons/fa";
-import { deleteMedia } from "@/redux/api/deleteImageApi";
 import toast from "react-hot-toast";
 import Image from "next/image";
 interface EditVisaProps {
@@ -137,27 +136,7 @@ const [iconPreviews, setIconPreviews] = useState<{
       methods.setValue(`${fieldName}.${index}.icon`, file);
     }
   };
-  // const handleDeleteMedia = async (countryId: string, mediaType: string, publicId: string, index: number, documentCategory?: string, documentTitle?: string, ) => {
-  //   try {
-  //     await deleteMedia({ countryId, mediaType, publicId, documentCategory, documentTitle });
 
-  //     if (mediaType === 'images') {
-  //       setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-  //     } else if (mediaType === 'locationImages') {
-  //       setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-  //     } else if (mediaType === 'icon') {
-  //       const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
-  //       if (Array.isArray(categoryIcons)) {
-  //         setIconPreviews((prev) => ({
-  //           ...prev,
-  //           [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
-  //         }));
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to delete media:", error);
-  //   }
-  // };
   useEffect(() => {
     if (visaInfo && visaRequirements) {
       reset({
@@ -265,21 +244,21 @@ const [iconPreviews, setIconPreviews] = useState<{
       console.error("Error updating visa:", error);
     }
   };
-  // const removeImage = (index: number) => {
-  //   setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  //   setValue(
-  //     'images',
-  //     methods.getValues('images').filter((_: any, i: number) => i !== index)
-  //   );
-  // };
+
   return (
     <>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-boxdark shadow-md rounded-md p-8 space-y-8" encType="multipart/form-data" >
- 
         <div className="grid grid-cols-2 gap-8">
           <TextInput name="countryName" label="Country Name" />
-          <TextInput name="visaType" label="Type of Visa" />
+          <SelectInput
+              name="visaType"
+              label="Type of Visa"
+              options={[
+                { value: "E-Visa", label: "E-Visa" },
+                { value: "Sticker Visa", label: "Sticker Visa" },
+              ]}
+            />
           <TextInput name="title" label="Title" />
           <TextInput name="subtitle" label="subtitle" />
           <TextInput name="description" label="Description" type="textarea" />
@@ -308,19 +287,6 @@ const [iconPreviews, setIconPreviews] = useState<{
             )}
  
             <TextInput name={`locationImages.${index}.location`} label="Location Name" />
-            {/* {locationImageFields.length > 1 && (
-            <Button
-            btnType="button"
-            containerStyles="px-4 py-2 bg-red text-white rounded"
-            title="Remove"
-            handleClick={() => handleDeleteMedia(
-                field.id,
-                'locationImages',
-                index,
-                field.image, 
-            )}
-            />
-            )}  */}
           </div>
         ))}
       </div>

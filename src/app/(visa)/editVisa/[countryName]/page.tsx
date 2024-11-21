@@ -8,6 +8,7 @@ import EditVisa from "@/components/Visa/EditVisa";
 interface VisaInfo {
   countryName: string;
   subtitle: string;
+  // visaType: string;
   capital: string;
   time: string;
   telephone_code: string;
@@ -41,6 +42,7 @@ const fetchVisaData = async (countryName: string) => {
   if (response.status !== 200) {
     throw new Error("Failed to fetch visa info");
   }
+  console.log("Fetch: ",response.data.data);
   return response.data.data;
 };
 

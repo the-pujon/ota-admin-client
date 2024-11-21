@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useForm, FormProvider, SubmitHandler, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import { TextInput } from "../FormInputs";
+import { SelectInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -295,7 +295,14 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
  
           <div className="grid grid-cols-2 gap-8">
             <TextInput name="countryName" label="Country Name" />
-            <TextInput name="visaType" label="Type of Visa" />
+            <SelectInput
+              name="visaType"
+              label="Type of Visa"
+              options={[
+                { value: "E-Visa", label: "E-Visa" },
+                { value: "Sticker Visa", label: "Sticker Visa" },
+              ]}
+            />
             <TextInput name="title" label="Title" />
             <TextInput name="subtitle" label="subtitle" />
             <TextInput name="description" label="Description" type="textarea" />
