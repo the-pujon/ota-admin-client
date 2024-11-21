@@ -9,17 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^43.3.0",
-    "@ckeditor/ckeditor5-core": "^43.3.0",
-    "@ckeditor/ckeditor5-engine": "^43.3.0",
-    "@ckeditor/ckeditor5-react": "^9.3.1",
-    "@ckeditor/ckeditor5-utils": "^43.3.0",
-    "@ckeditor/ckeditor5-watchdog": "^43.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@hookform/resolvers": "^3.9.0",
     "@reduxjs/toolkit": "^2.2.7",
-    "@types/ckeditor__ckeditor5-build-classic": "^37.0.4",
     "apexcharts": "^3.45.2",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
@@ -40,7 +33,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/ckeditor__ckeditor5-core": "^37.0.4",
     "@types/node": "^20",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18",
