@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { useForm, FormProvider, SubmitHandler, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import toast from "react-hot-toast";
@@ -181,12 +179,13 @@ const handleFileUpload = (
       setValue(`locationImages.${index}.image`, fileArray[0]);
     }
   };
-  const handleCKEditorChange = (index: number, fieldName: "note", data: string) => {
+
+  const handleNoteChange = (index: number, data: string) => {
     const plainText = data.replace(/<\/?[^>]+(>|$)/g, "");
     setValue(`note.${index}.text` as const, plainText);
   };
  
-  const handleDetailsCKEditorChange = (
+  const handleDetailsChange = (
     fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents", 
     index: number,
     detailIndex: number,
@@ -367,16 +366,16 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
  
  
           <h3 className="text-lg font-semibold text-gray-700">Notes</h3>
+
           {noteFields.map((item, index) => (
-            <div key={item.id} className="flex space-x-4">
-              <CKEditor
-                editor={ClassicEditor}
-                data=""
-                onChange={(event, editor) => {
-                  const data = editor.getData();
-                  handleCKEditorChange(index, "note", data);
-                }}
-              />
+            <div key={item.id} className="flex flex-col space-y-4 w-[50%]">
+            <TextInput
+            type="textarea"
+            name={`note.${index}.text`}
+            label="Notes"
+            onChange={(e) => handleNoteChange(index, e.target.value)}
+          />
+
              <div className="mt-12">
               {noteFields.length > 1 && (
                 <Button
@@ -422,13 +421,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`general_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={methods.getValues(`general_documents.${index}.details.0`) || ""}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    handleDetailsCKEditorChange("general_documents", index, 0, data);
-                  }}
+          
+                <TextInput
+                name={`general_documents.${index}.details.${index}`}
+                label={`Document Detail ${index + 1}`}
+                type="textarea"
+                onChange={(e) => handleDetailsChange("general_documents", index, 0, e.target.value)}
                 />
               </div>
             ))}
@@ -463,14 +461,13 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`business_person.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={methods.getValues(`business_person.${index}.details.0`) || ""}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    handleDetailsCKEditorChange("business_person", index, 0, data);
-                  }}
-                />
+
+            <TextInput
+            name={`business_person.${index}.details.${index}`}
+            label={`Document Detail ${index + 1}`}
+            type="textarea"
+            onChange={(e) => handleDetailsChange("business_person", index, 0, e.target.value)} 
+          />
               </div>
             ))}
             <Button
@@ -504,14 +501,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`student.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={methods.getValues(`student.${index}.details.0`) || ""}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    handleDetailsCKEditorChange("student", index, 0, data);
-                  }}
-                />
+            <TextInput
+            name={`student.${index}.details.0`}
+            label={`Document Detail ${index + 1}`}
+            type="textarea"
+            onChange={(e) => handleDetailsChange("student", index, 0, e.target.value)}
+          />
               </div>
             ))}
             <Button
@@ -545,14 +540,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`job_holder.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={methods.getValues(`job_holder.${index}.details.0`) || ""}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    handleDetailsCKEditorChange("job_holder", index, 0, data);
-                  }}
-                />
+                  <TextInput
+                  name={`job_holder.${index}.details.${index}`}
+                  label={`Document Detail ${index + 1}`}
+                  type="textarea"
+                  onChange={(e) => handleDetailsChange("job_holder", index, 0, e.target.value)}
+                 />
               </div>
             ))}
             <Button
@@ -586,14 +579,12 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
                 <label htmlFor={`other_documents.${index}.details.0`} className="block text-sm font-semibold text-gray-600">
                   Detail
                 </label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={methods.getValues(`other_documents.${index}.details.0`) || ""}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    handleDetailsCKEditorChange("other_documents", index, 0, data);
-                  }}
-                />
+                    <TextInput
+            name={`other_documents.${index}.details.${index}`}
+            label={`Document Detail ${index + 1}`}
+            type="textarea"
+            onChange={(e) => handleDetailsChange("other_documents", index, 0, e.target.value)}
+          />
               </div>
             ))}
             <Button
