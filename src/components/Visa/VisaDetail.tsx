@@ -5,6 +5,7 @@ import VisaRequirementSection from "./VisaRequirementSection";
 
 interface VisaInfo {
   countryName: string;
+  visaType: string;
   subtitle: string;
   capital: string;
   time: string;
@@ -43,10 +44,11 @@ const VisaDetail: React.FC<VisaDetailProps> = ({ visaInfo, visaRequirements }) =
       <div className="text-center mb-6">
         <h2 className="text-4xl font-bold text-gray-900">{visaInfo.countryName}</h2>
         <p className="text-lg text-gray-600 italic">{visaInfo.subtitle}</p>
+        {/* <p className="text-lg text-gray-600 italic">{visaInfo.visaType}</p> */}
       </div>
 
       <div className="mb-8">
-        <h3 className="text-2xl font-semibold text-gray-800">Visa Information</h3>
+        <h3 className="text-2xl font-semibold text-gray-800">Visa Information ({visaInfo.visaType})</h3>
         <p className="text-gray-600 my-4">{visaInfo.description}</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -17,6 +17,7 @@ const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
   const methods = useForm({
     defaultValues: {
       countryName: "",
+      visaType: "",
       title: "",
       subtitle: "",
       description: "",
@@ -136,31 +137,32 @@ const [iconPreviews, setIconPreviews] = useState<{
       methods.setValue(`${fieldName}.${index}.icon`, file);
     }
   };
-  const handleDeleteMedia = async (countryId: string, mediaType: string, publicId: string, index: number, documentCategory?: string, documentTitle?: string, ) => {
-    try {
-      await deleteMedia({ countryId, mediaType, publicId, documentCategory, documentTitle });
+  // const handleDeleteMedia = async (countryId: string, mediaType: string, publicId: string, index: number, documentCategory?: string, documentTitle?: string, ) => {
+  //   try {
+  //     await deleteMedia({ countryId, mediaType, publicId, documentCategory, documentTitle });
 
-      if (mediaType === 'images') {
-        setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-      } else if (mediaType === 'locationImages') {
-        setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
-      } else if (mediaType === 'icon') {
-        const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
-        if (Array.isArray(categoryIcons)) {
-          setIconPreviews((prev) => ({
-            ...prev,
-            [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
-          }));
-        }
-      }
-    } catch (error) {
-      console.error("Failed to delete media:", error);
-    }
-  };
+  //     if (mediaType === 'images') {
+  //       setImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+  //     } else if (mediaType === 'locationImages') {
+  //       setLocationImagePreviews((prev) => prev.filter((_, i: number) => i !== index));
+  //     } else if (mediaType === 'icon') {
+  //       const categoryIcons = iconPreviews[mediaType as keyof typeof iconPreviews];
+  //       if (Array.isArray(categoryIcons)) {
+  //         setIconPreviews((prev) => ({
+  //           ...prev,
+  //           [mediaType]: categoryIcons.filter((_, i: number) => i !== index),
+  //         }));
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to delete media:", error);
+  //   }
+  // };
   useEffect(() => {
     if (visaInfo && visaRequirements) {
       reset({
         countryName: visaInfo.countryName,
+        visaType: visaInfo.visaType,
         title: visaInfo.title,
         subtitle: visaInfo.subtitle,
         description: visaInfo.description,
@@ -205,6 +207,7 @@ const [iconPreviews, setIconPreviews] = useState<{
     const formDataToSend = new FormData();
  
     formDataToSend.append("countryName", formData.countryName);
+    formDataToSend.append("visaType", formData.visaType);
     formDataToSend.append("title", formData.title);
     formDataToSend.append("subtitle", formData.subtitle);
     formDataToSend.append("description", formData.description);
@@ -262,13 +265,13 @@ const [iconPreviews, setIconPreviews] = useState<{
       console.error("Error updating visa:", error);
     }
   };
-  const removeImage = (index: number) => {
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-    setValue(
-      'images',
-      methods.getValues('images').filter((_: any, i: number) => i !== index)
-    );
-  };
+  // const removeImage = (index: number) => {
+  //   setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  //   setValue(
+  //     'images',
+  //     methods.getValues('images').filter((_: any, i: number) => i !== index)
+  //   );
+  // };
   return (
     <>
     <FormProvider {...methods}>
@@ -276,6 +279,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
         <div className="grid grid-cols-2 gap-8">
           <TextInput name="countryName" label="Country Name" />
+          <TextInput name="visaType" label="Type of Visa" />
           <TextInput name="title" label="Title" />
           <TextInput name="subtitle" label="subtitle" />
           <TextInput name="description" label="Description" type="textarea" />
@@ -349,7 +353,7 @@ const [iconPreviews, setIconPreviews] = useState<{
               />
               <button
                 type="button"
-                onClick={() => removeImage(index)}
+                // onClick={() => removeImage(index)}
  
                 className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full hover:bg-red-700"
               >
@@ -361,7 +365,7 @@ const [iconPreviews, setIconPreviews] = useState<{
                containerStyles="absolute top-0 right-0 p-1 text-white bg-red rounded-full hover:bg-red-700"
                title=""
                icon={<FaTimes/>}
-               handleClick={() => removeImage(index)}
+              //  handleClick={() => removeImage(index)}
                />
             </div>
           ))}
