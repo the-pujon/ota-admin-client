@@ -9,7 +9,7 @@ interface CardDataStatsProps {
   children: ReactNode;
 }
 
-const CardDataStats: React.FC<CardDataStatsProps> = ({
+export const CardDataStats: React.FC<CardDataStatsProps> = ({
   title,
   total,
   rate,
@@ -75,3 +75,6 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
 };
 
 export default CardDataStats;
+
+
+
