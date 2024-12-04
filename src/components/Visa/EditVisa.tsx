@@ -374,6 +374,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
             {field.details.map((detail: string, detailIndex: number) => (
               <TextInput
+               type="textarea"
                 key={detailIndex}
                 name={`general_documents[${index}].details[${detailIndex}]`}
                 label={`Detail ${detailIndex + 1}`}
@@ -412,6 +413,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
             {field.details.map((detail: string, detailIndex: number) => (
               <TextInput
+                type="textarea"
                 key={detailIndex}
                 name={`business_person[${index}].details[${detailIndex}]`}
                 label={`Detail ${detailIndex + 1}`}
@@ -448,6 +450,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
             {field.details.map((detail: string, detailIndex: number) => (
               <TextInput
+               type="textarea"
                 key={detailIndex}
                 name={`student[${index}].details[${detailIndex}]`}
                 label={`Detail ${detailIndex + 1}`}
@@ -485,6 +488,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
             {field.details.map((detail: string, detailIndex: number) => (
               <TextInput
+                type="textarea"
                 key={detailIndex}
                 name={`job_holder[${index}].details[${detailIndex}]`}
                 label={`Detail ${detailIndex + 1}`}
@@ -521,6 +525,7 @@ const [iconPreviews, setIconPreviews] = useState<{
  
             {field.details.map((detail: string, detailIndex: number) => (
               <TextInput
+                type="textarea"
                 key={detailIndex}
                 name={`other_documents[${index}].details[${detailIndex}]`}
                 label={`Detail ${detailIndex + 1}`}
