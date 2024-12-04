@@ -9,7 +9,7 @@ export const baseApi = createApi({
   endpoints: (builder) => ({
     
   }),
-  tagTypes:['user']
+  tagTypes:['user','visa']
 })
 
 

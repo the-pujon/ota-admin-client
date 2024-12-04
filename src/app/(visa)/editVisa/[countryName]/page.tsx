@@ -1,14 +1,15 @@
+
+
 "use client";
 import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import axios from "axios";
 import EditVisa from "@/components/Visa/EditVisa";
- 
+import { useEditVisaMutation } from "@/redux/api/visaApi";
+import { use } from "react";
 interface VisaInfo {
   countryName: string;
   subtitle: string;
-  // visaType: string;
   capital: string;
   time: string;
   telephone_code: string;
@@ -17,7 +18,7 @@ interface VisaInfo {
   visaPrice_note: string;
   description: string;
   images: string[];
-  locationImages: { image: string; location: string,}[];
+  locationImages: { image: string; location: string }[];
   note: { text: string }[];
 }
 
@@ -36,20 +37,16 @@ interface VisaRequirements {
   job_holder: VisaRequirementCategory[];
   other_documents: VisaRequirementCategory[];
 }
- 
-const fetchVisaData = async (countryName: string) => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
-  if (response.status !== 200) {
-    throw new Error("Failed to fetch visa info");
-  }
-  console.log("Fetch: ",response.data.data);
-  return response.data.data;
-};
 
 export default function Page({ params }: { params: Promise<{ countryName: string }> }) {
   const [visaInfo, setVisaInfo] = useState<VisaInfo | null>(null);
   const [visaRequirements, setVisaRequirements] = useState<VisaRequirements | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize the mutation hook
+  const [editVisa, { isLoading: isFetching, isError, error: fetchError }] = useEditVisaMutation();
+
+  // Unwrap params
   const [countryName, setCountryName] = useState<string | null>(null);
   useEffect(() => {
     const unwrapParams = async () => {
@@ -58,36 +55,51 @@ export default function Page({ params }: { params: Promise<{ countryName: string
     };
     unwrapParams();
   }, [params]);
- 
+
+  // Fetch data when countryName is set
   useEffect(() => {
-    if (!countryName) return;
-     const getVisaData = async () => {
+    const getVisaData = async () => {
+      if (!countryName) return;
+
       try {
-        const { visaInfo, visaRequirements } = await fetchVisaData(countryName);
-        setVisaInfo(visaInfo);
-        setVisaRequirements(visaRequirements);
+        const response = await editVisa(countryName).unwrap();
+        // console.log(response.data)
+        setVisaInfo(response.data.visaInfo); 
+        setVisaRequirements(response.data.visaRequirements);
       } catch (error) {
         console.error("Error fetching visa data:", error);
         setError("Error fetching visa information. Please try again later.");
       }
     };
+
     getVisaData();
-  }, [countryName]);
+  }, [countryName, editVisa]);
 
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-10">
         <Breadcrumb pageName={`Edit Visa for ${countryName || "Country"}`} />
-        {error ? (
-          <div>{error}</div>
+        {isFetching ? (
+          <div>Loading...</div>
+        ) : isError && fetchError ? (
+          // Handle RTK Query error structure
+          <div>
+            {typeof fetchError === "object" && "data" in fetchError
+              ? (fetchError as any).data?.message || "Error fetching visa information."
+              : "An unexpected error occurred."}
+          </div>
         ) : visaInfo && visaRequirements ? (
           <EditVisa visaInfo={visaInfo} visaRequirements={visaRequirements} />
+        ) : error ? (
+          <div>{error}</div>
         ) : (
-          <div>Loading...</div>
+          <div>No data available.</div>
         )}
       </div>
     </DefaultLayout>
   );
-
 }
+
+
+
 

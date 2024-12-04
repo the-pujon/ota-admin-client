@@ -20,7 +20,7 @@ import Loader from "@/components/common/Loader";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(4, { message: "Password must be at least 4 characters long" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -51,7 +51,7 @@ const Login = () => {
         dispatch(signInSuccess(userData));
         successToast(res?.message)
       }
-         storeUserInfo({ accessToken: res?.data?.accessToken });
+        storeUserInfo({ accessToken: res?.data?.accessToken });
         //  setLoading(false);
     } catch (error: any) {
       errorToast(error?.data?.message);

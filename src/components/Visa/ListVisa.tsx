@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Pagination from "../Pagination";
 import ConfirmationModal from "../ConfirmationModal";
 import toast from "react-hot-toast";
-
+import { useListVisaMutation, useViewVisaMutation, useEditVisaMutation } from "@/redux/api/visaApi";
 
 interface VisaData {
   visaInfo: any;
@@ -17,18 +17,24 @@ interface VisaData {
 
 const ListVisa = () => {
   const [visaData, setVisaData] = useState<VisaData[]>([]);
-  const [selectedVisaInfo, setSelectedVisaInfo] = useState(null);
+  // const [selectedVisaInfo, setSelectedVisaInfo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteCountryName, setDeleteCountryName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
   const router = useRouter();
+  const [listVisa] = useListVisaMutation();
+  const [viewVisa] = useViewVisaMutation();
+  const [editVisa] = useEditVisaMutation();
 
   const fetchVisaData = async () => {
     try {
+      // console.log("hello")
       // const response = await axios.get("http://localhost:4000/api/v1/visa/countries/allVisaData");
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/countries/allVisaData`);
-      setVisaData(response.data.data);
+      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/countries/allVisaData`);
+      const response = await listVisa({}).unwrap();
+      // console.log("data: ",response.data);
+      setVisaData(response.data);
     } catch (error) {
       console.error("Error fetching visa data:", error);
     }
@@ -36,8 +42,10 @@ const ListVisa = () => {
 
   const handleViewClick = async (countryName: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
-      setSelectedVisaInfo(response.data.data);
+      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
+      const response = await viewVisa(countryName).unwrap();
+      console.log("viewVisa: ",response);
+      // setSelectedVisaInfo(response.data.data);
       router.push(`/visaDetails/${countryName}`);
     } catch (error) {
       console.error("Error fetching visa info:", error);
@@ -46,8 +54,9 @@ const ListVisa = () => {
 
   const handleEditClick = async (countryName: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
-      setSelectedVisaInfo(response.data.data);
+      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${countryName}`);
+      const response = await editVisa(countryName).unwrap();
+      // setSelectedVisaInfo(response.data.data);
       router.push(`/editVisa/${countryName}`);
     } catch (error) {
       console.error("Error fetching visa info:", error);
