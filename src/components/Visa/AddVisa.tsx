@@ -6,6 +6,7 @@ import { SelectInput, TextInput } from "../FormInputs";
 import Button from "../CustomButton";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useAddVisaMutation } from "@/redux/api/visaApi";
  
 interface FormData {
   countryName: string;
@@ -55,6 +56,7 @@ interface FormData {
  
  
 export default function AddVisa() {
+  const [addVisa, { isLoading }] = useAddVisaMutation();
   const methods = useForm<FormData>({
     defaultValues: {
       locationImages: [{ image: {} as File, location: "" }],
@@ -209,6 +211,17 @@ const handleFileUpload = (
       formData.append('locationImages', item.image);  
       formData.append(`location_${item.image.name}`, item.location);  
     });
+
+  //   data.locationImages.forEach((item, index) => {
+  // // Convert location to a string if it is an array
+  //   const sanitizedLocation = Array.isArray(item.location)
+  //     ? item.location.join(', ') // Join array into a single string
+  //     : item.location;
+
+  //   formData.append(`locationImages`, item.image); // Append image
+  //   formData.append(`location_${item.image.name}`, item.location); // Append location as a string
+  // });
+
  
     data.images.forEach((image) => {
       formData.append('images', image);
@@ -269,16 +282,21 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
  
  
     console.log(formData, "formData");
+
+      for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
  
  
     try {
       // const response = await axios.post('http://localhost:4000/api/v1/visa/addVisaInfo', formData, {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/addVisaInfo`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(response.data, "data")
+      // const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/addVisaInfo`, formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // });
+      const response = await addVisa(formData).unwrap();
+      console.log(response)
       toast.success("Content uploaded successfully!");
       reset();
       setImagePreviews([]);
@@ -304,7 +322,7 @@ formData.append('other_documents', JSON.stringify(data.other_documents));
               ]}
             />
             <TextInput name="title" label="Title" />
-            <TextInput name="subtitle" label="subtitle" />
+            <TextInput name="subtitle" label="Subtitle" />
             <TextInput name="description" label="Description" type="textarea" />
           </div>
  

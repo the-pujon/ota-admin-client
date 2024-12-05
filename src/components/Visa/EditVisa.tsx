@@ -7,12 +7,14 @@ import Button from "../CustomButton";
 import { FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useUpdateVisaMutation } from "@/redux/api/visaApi";
 interface EditVisaProps {
   visaInfo: any;
   visaRequirements: any;
 }
  
 const EditVisa: React.FC<EditVisaProps> = ({ visaInfo, visaRequirements }) => {
+  const [updateVisa, { isLoading }] = useUpdateVisaMutation();
   const methods = useForm({
     defaultValues: {
       countryName: "",
@@ -229,15 +231,20 @@ const [iconPreviews, setIconPreviews] = useState<{
         }
       });
     }
- 
+    for (const [key, value] of formDataToSend.entries()) {
+      console.log(`${key}:`, value);
+    }
+    console.log("formData: ",formDataToSend);
     try {
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${visaInfo.countryName}`, formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${visaInfo.countryName}`, formDataToSend, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+      const response = await updateVisa(formDataToSend).unwrap();
+      console.log(response)
       toast.success("Content updated successfully!");
-      console.log("Visa updated successfully:", response.data);
+      console.log("Visa updated successfully:", response);
     } catch (error) {
       toast.error("Something Going Wrong!");
       console.error("Error updating visa:", error);
@@ -399,7 +406,7 @@ const [iconPreviews, setIconPreviews] = useState<{
         <Button
          btnType="button"
          containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
-         title="Add Another Genaral Document"
+         title="Add Another General Document"
          handleClick={() => appendGeneralDocument({ title: "", details: [""], icon: {} as File })}
         />
  

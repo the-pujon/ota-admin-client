@@ -69,10 +69,8 @@ export const axiosBaseQuery =
     try {
       const headers: AxiosRequestConfig['headers'] = {};
 
-      // Dynamically set Content-Type
       if (contentType === 'multipart/form-data') {
-        // Do not set Content-Type manually for multipart/form-data
-        // Let the browser automatically handle it
+        headers['Content-Type'] = contentType || 'multipart/form-data';
       } else {
         headers['Content-Type'] = contentType || 'application/json';
       }
