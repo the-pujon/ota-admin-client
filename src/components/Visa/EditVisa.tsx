@@ -266,7 +266,7 @@ const [iconPreviews, setIconPreviews] = useState<{
               ]}
             />
           <TextInput name="title" label="Title" />
-          <TextInput name="subtitle" label="subtitle" />
+          <TextInput name="subtitle" label="Subtitle" />
           <TextInput name="description" label="Description" type="textarea" />
         </div>
  
