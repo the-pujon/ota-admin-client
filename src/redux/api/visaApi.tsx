@@ -38,6 +38,7 @@ const visaApi = baseApi.injectEndpoints({
       queryFn: async (formData): Promise<{ data: unknown } | { error: { status: number; data: unknown } }> => {
         try {
           const baseUrl = getBaseUrl();
+        
           const response = await fetch(`${baseUrl}/visa/addVisaInfo`, {
             method: 'POST',
             body: formData, 
@@ -63,6 +64,7 @@ const visaApi = baseApi.injectEndpoints({
       queryFn: async (formDataToSend): Promise<{ data: unknown } | { error: { status: number; data: unknown } }> => {
         try {
           const baseUrl = getBaseUrl();
+          console.log("baseUrl: ",baseUrl);
           const response = await fetch(`${baseUrl}/visa/${formDataToSend.countryName}`, {
             method: 'PUT',
             body: formDataToSend, 
