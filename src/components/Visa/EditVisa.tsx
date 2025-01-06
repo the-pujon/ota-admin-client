@@ -191,6 +191,11 @@ const [iconPreviews, setIconPreviews] = useState<{
     formDataToSend.append("title", formData.title);
     formDataToSend.append("subtitle", formData.subtitle);
     formDataToSend.append("description", formData.description);
+    formDataToSend.append("capital", formData.capital);
+    formDataToSend.append("time", formData.time);
+    formDataToSend.append("telephone_code", formData.telephone_code);
+    formDataToSend.append("bank_time", formData.bank_time);
+    formDataToSend.append("embassy_address", formData.embassy_address);
     formDataToSend.append("visaPrice_mainText", formData.visaPrice_mainText);
     formDataToSend.append("visaPrice_price", formData.visaPrice_price);
     formDataToSend.append("visaPrice_note", formData.visaPrice_note);
