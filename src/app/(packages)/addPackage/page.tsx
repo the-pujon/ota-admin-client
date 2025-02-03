@@ -61,7 +61,8 @@ const formSchema = z.object({
     }),
   ),
   category: z.string().min(1, "Category is required"), // New select field
-  duration: z.string().min(1, "Category is required"), // New select field
+  duration: z.string().min(1, "Duration is required"), // New select field
+  country: z.string().min(1, "Country is required"), // New select field
   images: z
     .array(
       z.object({
@@ -99,6 +100,7 @@ const DynamicForm: React.FC = () => {
       detailedItinerary: [{ day: "", title: "", description: "" }],
       category: "", // Default value for the select field
       duration: "", // Default value for the select Duration
+      country: "", // Default value for the select Duration
       images: [{ file: null }],
     },
   });
@@ -174,6 +176,7 @@ const DynamicForm: React.FC = () => {
     formData.append("price", data.price.toString());
     formData.append("category", data.category);
     formData.append("duration", data.duration);
+    formData.append("country", data.country);
 
     // Append array fields
     data.highlights.forEach((highlight, index) => {
@@ -518,6 +521,8 @@ const DynamicForm: React.FC = () => {
               <p className="text-red-500 text-sm text-red">{errors.category.message}</p>
             )}
           </div>
+          {/* Select Option (Category) End*/}
+          {/* Select Duration*/}
           <div>
             <label className="block text-sm font-medium">Duration</label>
             <select
@@ -535,6 +540,31 @@ const DynamicForm: React.FC = () => {
               <p className="text-red-500 text-sm text-red">{errors.duration?.message}</p>
             )}
           </div>
+          {/* Select Duration End*/}
+          {/* Select Country*/}
+                    <div>
+            <label className="block text-sm font-medium">Country</label>
+            <select
+              {...register("country")}
+              className="border-gray-300 w-full rounded border p-2"
+            >
+              <option value="">Select a Country</option>
+              <option value="India">India</option>
+              <option value="Nepal">Nepal</option>
+              <option value="Turkey">Turkey</option>
+              <option value="Thailand">Thailand</option>
+              <option value="Egypt">Egypt</option>
+              <option value="Maldives">Maldives</option>
+              <option value="Dubai">Dubai</option>
+              <option value="Singapore">Singapore</option>
+              <option value="Malaysia">Malaysia</option>
+            </select>
+            {errors.category && (
+              <p className="text-red-500 text-sm text-red">{errors.country?.message}</p>
+            )}
+          </div>
+          {/* Select Country End*/}
+
           {/* images */}
 
           <div>
