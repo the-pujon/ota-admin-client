@@ -511,11 +511,11 @@ const DynamicForm: React.FC = () => {
               className="border-gray-300 w-full rounded border p-2"
             >
               <option value="">Select a category</option>
-              <option value="adventure">Adventure</option>
-              <option value="beach">Beach</option>
-              <option value="cultural">Cultural</option>
-              <option value="wildlife">Wildlife</option>
-              <option value="historical">Historical</option>
+              <option value="adventure">Quick Gateways</option>
+              <option value="beach">Adventure & Discovery</option>
+              <option value="cultural">Relaxation & Retreat</option>
+              <option value="wildlife">Cultural Immersion</option>
+              <option value="historical">Luxury & Exclusivity</option>
             </select>
             {errors.category && (
               <p className="text-red-500 text-sm text-red">{errors.category.message}</p>
