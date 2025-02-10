@@ -8,7 +8,12 @@ import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPassport, faUsers, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPassport,
+  faUsers,
+  faMoneyBillTransfer,
+  faGift,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -20,9 +25,7 @@ const menuGroups = [
     name: "Visa Module",
     menuItems: [
       {
-        icon: (
-          <FontAwesomeIcon icon={faPassport} />
-        ),
+        icon: <FontAwesomeIcon icon={faPassport} />,
         label: "Visa",
         route: "#",
         children: [
@@ -31,31 +34,39 @@ const menuGroups = [
           // { label: "Manage Visa", route: "/visa/manage" },
         ],
       },
-
+    ],
+  },
+  {
+    name: "Package Module",
+    menuItems: [
+      {
+        icon: <FontAwesomeIcon icon={faGift} />,
+        label: "Packages",
+        route: "#",
+        children: [
+          { label: "List of Package's", route: "/allPackage" },
+          { label: "Add Package", route: "/addPackage" },
+          // { label: "Manage Visa", route: "/visa/manage" },
+        ],
+      },
     ],
   },
   {
     name: "Payment Module",
     menuItems: [
       {
-        icon: (
-          <FontAwesomeIcon icon={faMoneyBillTransfer} />
-        ),
+        icon: <FontAwesomeIcon icon={faMoneyBillTransfer} />,
         label: "SSLCommerz",
         route: "#",
-        children: [
-          { label: "List of Payments", route: "/paymentLists" },
-        ],
-      },      
+        children: [{ label: "List of Payments", route: "/paymentLists" }],
+      },
     ],
   },
   {
     name: "Auth Module",
     menuItems: [
       {
-        icon: (
-          <FontAwesomeIcon icon={faUsers} />
-        ),
+        icon: <FontAwesomeIcon icon={faUsers} />,
         label: "User",
         route: "#",
         children: [
@@ -63,7 +74,7 @@ const menuGroups = [
           // { label: "Add User", route: "/user/add" },
           // { label: "Manage User", route: "/user/manage" },
         ],
-      },      
+      },
     ],
   },
 ];
