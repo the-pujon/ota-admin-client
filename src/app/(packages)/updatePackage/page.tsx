@@ -1,11 +1,11 @@
-import React from 'react'
+// import React from 'react'
 
-const page = () => {
-  return (
-    <div>
-      Update Package
-    </div>
-  )
-}
+// const page = () => {
+//   return (
+//     <div>
+//       Update Package
+//     </div>
+//   )
+// }
 
-export default page
+// export default page
