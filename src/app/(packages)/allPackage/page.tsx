@@ -15,5 +15,4 @@ const Page = () => {
     </DefaultLayout>
   );
 };
-
 export default Page;
