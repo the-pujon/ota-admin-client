@@ -1,6 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { useForm, useFieldArray,FormProvider, Controller } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  FormProvider,
+  Controller,
+} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@/components/CustomButton";
@@ -526,11 +531,17 @@ const DynamicForm: React.FC = () => {
                   className="border-gray-300 w-full rounded border p-2"
                 >
                   <option value="">Select a category</option>
-                  <option value="adventure">Quick Gateways</option>
-                  <option value="beach">Adventure & Discovery</option>
-                  <option value="cultural">Relaxation & Retreat</option>
-                  <option value="wildlife">Cultural Immersion</option>
-                  <option value="historical">Luxury & Exclusivity</option>
+                  <option value="Quick Gateways">Quick Gateways</option>
+                  <option value="Adventure & Discovery">
+                    Adventure & Discovery
+                  </option>
+                  <option value="Relaxation & Retreat">
+                    Relaxation & Retreat
+                  </option>
+                  <option value="Cultural Immersion">Cultural Immersion</option>
+                  <option value="Luxury & Exclusivity">
+                    Luxury & Exclusivity
+                  </option>
                 </select>
                 {errors.category && (
                   <p className="text-red-500 text-sm text-red">
