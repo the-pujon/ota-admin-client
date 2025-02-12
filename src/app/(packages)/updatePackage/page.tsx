@@ -1,11 +1,18 @@
-import React from 'react'
+"use client";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import AddPackage from "@/components/Package/AddPackage";
+import useRedirectHelper from "@/utils/authRedirectHelper";
 
-const page = () => {
+const Page = () => {
+  useRedirectHelper("/updatePackage");
   return (
-    <div>
-      Update Package
-    </div>
-  )
-}
-
-export default page
+    <DefaultLayout>
+      <div className="flex flex-col gap-10">
+        <Breadcrumb pageName="Edit Package" />
+        {/* <AddPackage /> */}
+      </div>
+    </DefaultLayout>
+  );
+};
+export default Page;

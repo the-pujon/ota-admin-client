@@ -1,47 +1,18 @@
-"use client"
-import React from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+"use client";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import AddPackage from "@/components/Package/AddPackage";
+import useRedirectHelper from "@/utils/authRedirectHelper";
 
-function MyForm() {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      users: [{ name: '' }], // Ensure at least one field is initialized
-    },
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'users', // Name of the field array
-  });
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
+const Page = () => {
+  useRedirectHelper("/allPackage");
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {fields.map((field, index) => (
-        <div key={field.id}>
-          <Controller
-            name={`users[${index}].name`}
-            control={control}
-            render={({ field }) => <input {...field} />}
-          />
-          {fields.length > 1 && (
-            <button type="button" onClick={() => remove(index)}>
-              Remove
-            </button>
-          )}
-        </div>
-      ))}
-      
-      <button type="button" onClick={() => append({ name: '' })}>
-        Add Field
-      </button>
-      
-      <button type="submit">Submit</button>
-    </form>
+    <DefaultLayout>
+      <div className="flex flex-col gap-10">
+        <Breadcrumb pageName="All Package" />
+        {/* <AddPackage /> */}
+      </div>
+    </DefaultLayout>
   );
-}
-
-export default MyForm;
+};
+export default Page;
