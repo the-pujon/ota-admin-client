@@ -22,6 +22,15 @@ const formSchema = z.object({
     (value) => Number(value),
     z.number().positive("Price must be greater than zero"),
   ),
+  discountPrice: z.preprocess(
+    (value) => Number(value),
+    z.number().positive("Price must be greater than zero").optional(),
+  ),
+  discountPercentage: z.preprocess(
+    (value) => Number(value),
+    z.number().positive("Price must be greater than zero").optional(),
+  ),
+  // isExclusive: z.boolean().optional(),
   highlights: z
     .array(
       z.object({
@@ -97,6 +106,9 @@ const DynamicForm: React.FC = () => {
       title: "",
       about: "",
       price: 0,
+      discountPrice: 0,
+      discountPercentage: 0,
+      // isExclusive: false,
       highlights: [{ title: "", description: "" }],
       inclusions: [{ title: "" }],
       exclusions: [{ title: "" }],
@@ -179,6 +191,15 @@ const DynamicForm: React.FC = () => {
     formData.append("title", data.title);
     formData.append("about", data.about);
     formData.append("price", data.price.toString());
+    if (data.discountPrice !== undefined) {
+      formData.append("discountPrice", data?.discountPrice.toString());
+    }
+    if (data.discountPercentage !== undefined) {
+      formData.append("discountPercentage", data.discountPercentage.toString());
+    }
+    // if (data.isExclusive !== undefined) {
+    //   formData.append("isExclusive", data.isExclusive.toString());
+    // }
     formData.append("category", data.category);
     formData.append("duration", data.duration);
     formData.append("country", data.country);
@@ -309,6 +330,54 @@ const DynamicForm: React.FC = () => {
                 )}
               </div>
               {/* Price End*/}
+                        {/* discountPrice */}
+          <div>
+            <label className="block text-sm font-medium">Discount Price</label>
+            <input
+              {...register("discountPrice")}
+              className="border-gray-300 w-full rounded border p-2"
+              placeholder="Enter Discount Price"
+              type="number"
+            />
+            {errors.discountPrice && (
+              <p className="text-red-500 text-sm text-red">{errors.discountPrice?.message}</p>
+            )}
+          </div>
+          {/* discount Price End*/}
+
+          {/* discountPercentage */}
+          <div>
+            <label className="block text-sm font-medium">discountPercentage</label>
+            <input
+              {...register("discountPercentage")}
+              className="border-gray-300 w-full rounded border p-2"
+              placeholder="Enter Discount Percentage"
+              type="number"
+            />
+            {errors.discountPercentage && (
+              <p className="text-red-500 text-sm text-red">{errors.discountPercentage?.message}</p>
+            )}
+          </div>
+          {/* discountPercentage End*/}
+
+          {/* isExclusive */}
+
+          {/* <div>
+            <label className="block text-sm font-medium">isExclusive</label>
+            <select
+              {...register("isExclusive")}
+              className="border-gray-300 w-full rounded border p-2"
+            >
+              <option value="false">select</option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+            {errors.isExclusive && (
+              <p className="text-red-500 text-sm text-red">{errors.isExclusive.message}</p>
+            )}
+          </div> */}
+
+          {/* isExclusive End*/}
               {/* Highlights */}
               <div>
                 <label className="block text-sm font-medium">Highlights</label>
