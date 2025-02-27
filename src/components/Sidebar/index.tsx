@@ -31,6 +31,7 @@ const menuGroups = [
         children: [
           { label: "List of Visa", route: "/listVisa" },
           { label: "Add Visa Info", route: "/addVisa" },
+          { label: "Add new Visa", route: "/addNewVisa" },
           // { label: "Manage Visa", route: "/visa/manage" },
         ],
       },
