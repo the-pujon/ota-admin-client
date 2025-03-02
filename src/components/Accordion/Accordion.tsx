@@ -9,7 +9,7 @@ export const Accordion = ({
     const [isOpen, setIsOpen] = useState(defaultOpen)
   
     return (
-      <div className="mb-8 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
+      <div className="mb-8 rounded-xl overflow-hidden bg-white shadow hover:shadow-md transition-shadow duration-200">
         <button
           type="button"
           className={`w-full flex justify-between items-center px-6 py-5 bg-gradient-to-r from-gray-50 to-white text-left hover:from-gray-100 hover:to-gray-50 transition-all duration-300`}
