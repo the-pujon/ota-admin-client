@@ -14,6 +14,7 @@ import {
   MdOutlinePlaylistAdd,
 } from "react-icons/md";
 import { FiDelete } from "react-icons/fi";
+import { errorToast, successToast } from "../Toast";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -30,7 +31,7 @@ const formSchema = z.object({
     (value) => Number(value),
     z.number().positive("Price must be greater than zero").optional(),
   ),
-  // isExclusive: z.boolean().optional(),
+
   highlights: z
     .array(
       z.object({
@@ -80,14 +81,15 @@ const formSchema = z.object({
   images: z
     .array(
       z.object({
-        file: z.instanceof(File).nullable(),
+        file: z
+          .custom<File | null>(
+            (file) => file instanceof File || file === null,
+            "Invalid file",
+          )
+          .nullable(),
       }),
     )
     .length(4, "Exactly 4 images are required")
-    .refine(
-      (images) => images.every((image) => image.file),
-      "All images must have a file",
-    ),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -122,7 +124,11 @@ const DynamicForm: React.FC = () => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: imagesFields,
+    append: appendImages,
+    remove: removeImage,
+  } = useFieldArray({
     control,
     name: "images", // Field array name
   });
@@ -197,9 +203,7 @@ const DynamicForm: React.FC = () => {
     if (data.discountPercentage !== undefined) {
       formData.append("discountPercentage", data.discountPercentage.toString());
     }
-    // if (data.isExclusive !== undefined) {
-    //   formData.append("isExclusive", data.isExclusive.toString());
-    // }
+
     formData.append("category", data.category);
     formData.append("duration", data.duration);
     formData.append("country", data.country);
@@ -245,40 +249,62 @@ const DynamicForm: React.FC = () => {
       }
     });
 
-    // console formdata
-    // for (const pair of formData.entries()) {
-    //   console.log(pair[0], pair[1]);
-    // }
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/package/create`,
         {
           method: "POST",
           body: formData,
-        },
+        }
       );
-
+    
       if (!response.ok) {
-        throw new Error("Upload Failed: " + response.statusText);
+        throw new Error(`Request failed with status: ${response.status} - ${response.statusText}`);
       }
-
+    
       const responseData = await response.json();
       console.log("Upload Success:", responseData);
+      successToast("Data submitted successfully");
     } catch (error) {
       console.error("Upload Failed:", error);
+      errorToast("Error Occurred, please try again.",error);
     } finally {
       setLoading(false);
     }
+    
+
+
+    // try {
+    //   const response = await fetch(
+    //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/package/create`,
+    //     {
+    //       method: "POST",
+    //       body: formData,
+    //     },
+    //   );
+
+    //   if (response.ok) {
+    //     successToast("Data Submitted Successfully")
+    //   }
+    //   if (!response.ok) {
+    //     errorToast("Something went wrong")
+    //     //throw new Error("Upload Failed: " + response.statusText);
+    //   }
+
+    //   const responseData = await response.json();
+    //   console.log("Upload Success:", responseData);
+    // } catch (error) {
+    //   console.error("Upload Failed:", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
     <div className="">
       <div className="">
         <div className=" flex items-center justify-center bg-white p-6">
-          {/* <span className=" w-full rounded-sm bg-slate-600 p-2 text-center text-2xl font-semibold uppercase text-slate-200">
-            Package Submit FORM
-          </span> */}
+
           <div className="w-full">
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -330,69 +356,75 @@ const DynamicForm: React.FC = () => {
                 )}
               </div>
               {/* Price End*/}
-                        {/* discountPrice */}
-          <div>
-            <label className="block text-sm font-medium">Discount Price</label>
-            <input
-              {...register("discountPrice")}
-              className="border-gray-300 w-full rounded border p-2"
-              placeholder="Enter Discount Price"
-              type="number"
-            />
-            {errors.discountPrice && (
-              <p className="text-red-500 text-sm text-red">{errors.discountPrice?.message}</p>
-            )}
-          </div>
-          {/* discount Price End*/}
+              {/* discountPrice */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Discount Price
+                </label>
+                <input
+                  {...register("discountPrice")}
+                  className="border-gray-300 w-full rounded border p-2"
+                  placeholder="Enter Discount Price"
+                  type="number"
+                />
+                {errors.discountPrice && (
+                  <p className="text-red-500 text-sm text-red">
+                    {errors.discountPrice?.message}
+                  </p>
+                )}
+              </div>
+              {/* discount Price End*/}
 
-          {/* discountPercentage */}
-          <div>
-            <label className="block text-sm font-medium">discountPercentage</label>
-            <input
-              {...register("discountPercentage")}
-              className="border-gray-300 w-full rounded border p-2"
-              placeholder="Enter Discount Percentage"
-              type="number"
-            />
-            {errors.discountPercentage && (
-              <p className="text-red-500 text-sm text-red">{errors.discountPercentage?.message}</p>
-            )}
-          </div>
-          {/* discountPercentage End*/}
+              {/* discountPercentage */}
+              <div>
+                <label className="block text-sm font-medium">
+                  discountPercentage
+                </label>
+                <input
+                  {...register("discountPercentage")}
+                  className="border-gray-300 w-full rounded border p-2"
+                  placeholder="Enter Discount Percentage"
+                  type="number"
+                />
+                {errors.discountPercentage && (
+                  <p className="text-red-500 text-sm text-red">
+                    {errors.discountPercentage?.message}
+                  </p>
+                )}
+              </div>
 
-          {/* isExclusive */}
-
-          {/* <div>
-            <label className="block text-sm font-medium">isExclusive</label>
-            <select
-              {...register("isExclusive")}
-              className="border-gray-300 w-full rounded border p-2"
-            >
-              <option value="false">select</option>
-              <option value="true">true</option>
-              <option value="false">false</option>
-            </select>
-            {errors.isExclusive && (
-              <p className="text-red-500 text-sm text-red">{errors.isExclusive.message}</p>
-            )}
-          </div> */}
-
-          {/* isExclusive End*/}
               {/* Highlights */}
               <div>
                 <label className="block text-sm font-medium">Highlights</label>
                 {highlightFields.map((field, index) => (
-                  <div key={field.id} className="mb-2 flex items-center gap-2">
-                    <input
-                      {...register(`highlights.${index}.title`)}
-                      className="border-gray-300 w-1/2 rounded border p-2"
-                      placeholder="Highlight Title"
-                    />
-                    <input
-                      {...register(`highlights.${index}.description`)}
-                      className="border-gray-300 w-1/2 rounded border p-2"
-                      placeholder="Highlight Description"
-                    />
+                  <div
+                    key={field.id}
+                    className="mb-2 flex w-full items-center gap-2"
+                  >
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`highlights.${index}.title`)}
+                        className="border-gray-300 w-full  rounded border p-2"
+                        placeholder="Highlight Title"
+                      />
+                      {errors.highlights?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.highlights[index].title?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex w-full flex-col items-start justify-start">
+                      <input
+                        {...register(`highlights.${index}.description`)}
+                        className="border-gray-300 w-full  rounded border p-2"
+                        placeholder="Highlight Description"
+                      />
+                      {errors.highlights?.[index]?.description && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.highlights[index].description?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeHighlight(index)}
@@ -403,6 +435,13 @@ const DynamicForm: React.FC = () => {
                     </button>
                   </div>
                 ))}
+                
+                {errors.highlights &&
+                  typeof errors.highlights.message === "string" && (
+                    <p className="text-red-500 text-sm text-red">
+                      {errors.highlights?.message}
+                    </p>
+                  )}
                 <button
                   type="button"
                   onClick={() =>
@@ -418,13 +457,22 @@ const DynamicForm: React.FC = () => {
               {/* Inclusions */}
               <div>
                 <label className="block text-sm font-medium">Inclusions</label>
-                {inclusionFields.map((field, index) => (
+                {inclusionFields?.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`inclusions.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Inclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`inclusions.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Inclusion"
+                      />
+
+                      {errors.inclusions?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.inclusions[index].title?.message}
+                        </p>
+                      )}
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => removeInclusion(index)}
@@ -452,11 +500,18 @@ const DynamicForm: React.FC = () => {
                 <label className="block text-sm font-medium">Exclusions</label>
                 {exclusionFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`exclusions.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Exclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`exclusions.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Exclusion"
+                      />
+                      {errors.exclusions?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.exclusions[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeExclusion(index)}
@@ -483,11 +538,18 @@ const DynamicForm: React.FC = () => {
                 <label className="block text-sm font-medium">Cities</label>
                 {citiesFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`cities.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Exclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`cities.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Exclusion"
+                      />
+                      {errors.cities?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.cities[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removecities(index)}
@@ -516,11 +578,18 @@ const DynamicForm: React.FC = () => {
                 </label>
                 {noteFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`importantNotes.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Note"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`importantNotes.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Note"
+                      />
+                      {errors.importantNotes?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.importantNotes[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeNote(index)}
@@ -551,16 +620,32 @@ const DynamicForm: React.FC = () => {
                   <div key={field.id} className="mb-4 space-y-2">
                     <div className=" flex w-full items-start justify-center">
                       <div className=" flex w-full flex-col items-start justify-start gap-y-2">
+                      <div className="w-full flex  flex-col items-start justify-start ">
+                     
                         <input
                           {...register(`detailedItinerary.${index}.day`)}
                           className="border-gray-300 w-full rounded border p-2"
                           placeholder="Day"
                         />
+                        {errors.detailedItinerary?.[index]?.day && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.detailedItinerary[index].day?.message}
+                        </p>
+                      )}
+                      </div>
+                      <div className="w-full flex  flex-col items-start justify-start ">
                         <input
                           {...register(`detailedItinerary.${index}.title`)}
                           className="border-gray-300 w-full rounded border p-2"
                           placeholder="Itinerary Title"
                         />
+                         {errors.detailedItinerary?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.detailedItinerary[index].title?.message}
+                        </p>
+                      )}
+                        </div>
+                        <div className="w-full flex  flex-col items-start justify-start ">
                         <textarea
                           {...register(
                             `detailedItinerary.${index}.description`,
@@ -568,6 +653,12 @@ const DynamicForm: React.FC = () => {
                           className="border-gray-300 w-full rounded border p-2"
                           placeholder="Itinerary Description"
                         />
+                         {errors.detailedItinerary?.[index]?.description && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.detailedItinerary[index].description?.message}
+                        </p>
+                      )}
+                      </div>
                       </div>
                       <button
                         type="button"
@@ -670,7 +761,7 @@ const DynamicForm: React.FC = () => {
 
               <div>
                 <label className="block font-medium">Images</label>
-                {fields.map((field, index) => (
+                {imagesFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
                     <Controller
                       control={control}
@@ -685,52 +776,46 @@ const DynamicForm: React.FC = () => {
                           }}
                           className="file-input"
                         />
-                      )}
+                        
+                      )}  
                     />
                     <button
                       type="button"
-                      onClick={() => remove(index)}
+                      onClick={() => removeImage(index)}
                       className="bg-red-500 rounded px-2 py-1 text-white"
                     >
-                      Remove
+                      <FiDelete className="text-slate-400" size={24} />
                     </button>
                   </div>
                 ))}
-                {errors.images && (
-                  <p className="text-red-500 text-red">
+                  {errors.images && (
+                  <p className="text-red-500 text-sm text-red">
                     {errors.images.message}
                   </p>
                 )}
+               
+                
                 <button
                   type="button"
-                  onClick={() => append({ file: null })}
+                  onClick={() => appendImages({ file: null })}
                   className=" flex items-center justify-center gap-x-1 rounded-md p-1 text-slate-600"
                 >
                   <MdOutlineAddPhotoAlternate />
                   Add Image
                 </button>
               </div>
-              {/* <div className="">
-        Add Image
-          
-        </div> */}
 
-              {/* images */}
-              {/* <button
-          disabled={loading}
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded"
-        >
-          {loading ? "Loading ...." : "Submit Here"}
-        </button> */}
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center w-full ">
                 <Button
                   isDisabled={loading}
                   btnType="submit"
                   title={loading ? "Loading ...." : "Submit Here"}
-                  containerStyles={`${loading ? "bg-slate-400" : "bg-orange-deep"} p-2 text-white uppercase rounded-md`}
+                  containerStyles={`${loading ? "bg-slate-400" : "bg-orange-deep"} w-1/2 p-2 text-white uppercase rounded-md`}
                 />
               </div>
+            <div className="">
+              Note : Same title and more or less than 4 images are not permitted.
+            </div>
             </form>
           </div>
         </div>
@@ -740,3 +825,4 @@ const DynamicForm: React.FC = () => {
 };
 
 export default DynamicForm;
+
