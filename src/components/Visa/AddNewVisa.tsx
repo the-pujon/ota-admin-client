@@ -3,12 +3,20 @@ import { useState } from "react"
 import type React from "react"
 
 import { useForm, FormProvider, type SubmitHandler, useFieldArray } from "react-hook-form"
-import { SelectInput, TextInput } from "../FormInputs"
+// import { SelectInput, TextInput } from "../FormInputs"
 import Button from "../CustomButton"
 import toast from "react-hot-toast"
 import Image from "next/image"
 import { useAddVisaMutation } from "@/redux/api/visaApi"
+import { TextInput } from "../ui/form/text-input"
+import { SelectInput } from "../ui/form/select-input"
+import { MdClose } from "react-icons/md"
+import { FaPlus } from "react-icons/fa"
+// import { Accordion } from "../Accordion/Accordion"
+// import DocumentSection from "./DocumentInput"
 import { Accordion } from "../Accordion/Accordion"
+import DocumentSection from "./DocumentInput"
+// import ThemeToggle from "../ThemeToggle"
 
 interface FormData {
   countryName: string
@@ -55,11 +63,10 @@ interface FormData {
   visaPrice_price: string
   visaPrice_note: string
 }
-
-
-
+type DocumentFieldName = "general_documents" | "business_person" | "student" | "job_holder" | "other_documents"
 export default function AddNewVisa() {
-  const [addVisa, { isLoading }] = useAddVisaMutation()
+  const [addVisa, { isLoading, error }] = useAddVisaMutation()
+  console.log("error is here", error)
   const methods = useForm<FormData>({
     defaultValues: {
       locationImages: [{ image: {} as File, location: "" }],
@@ -165,7 +172,7 @@ export default function AddNewVisa() {
   })
 
   const handleFileUpload = (
-    fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents",
+    fieldName: DocumentFieldName,
     index: number,
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -187,7 +194,7 @@ export default function AddNewVisa() {
   }
 
   const removeIcon = (
-    fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents",
+    fieldName: DocumentFieldName,
     index: number,
   ) => {
     const newIconPreviews = { ...iconPreviews }
@@ -246,6 +253,7 @@ export default function AddNewVisa() {
   }
 
   const removeLocationImage = (index: number) => {
+    console.log("locationImageFields.length", locationImageFields.length)
     const newImagePreviews = [...locationImagePreviews]
     if (newImagePreviews[index]) {
       URL.revokeObjectURL(newImagePreviews[index])
@@ -261,7 +269,7 @@ export default function AddNewVisa() {
   }
 
   const handleDetailsChange = (
-    fieldName: "general_documents" | "business_person" | "student" | "job_holder" | "other_documents",
+    fieldName: DocumentFieldName,
     index: number,
     detailIndex: number,
     data: string,
@@ -339,20 +347,27 @@ export default function AddNewVisa() {
     formData.append("visaPrice_price", data.visaPrice_price)
     formData.append("visaPrice_note", data.visaPrice_note)
 
+    console.log( "formData" , formData);
+
+    for (const [key, value] of formData.entries()) {
+    console.log(`${key}:`, value);
+  }
+
+
     try {
       const response = await addVisa(formData).unwrap()
       console.log(response)
       toast.success("Content uploaded successfully!")
-      reset()
-      setImagePreviews([])
-      setLocationImagePreviews([])
-      setIconPreviews({
-        general_documents: {},
-        business_person: {},
-        student: {},
-        job_holder: {},
-        other_documents: {},
-      })
+    //   reset()
+    //   setImagePreviews([])
+    //   setLocationImagePreviews([])
+    //   setIconPreviews({
+    //     general_documents: {},
+    //     business_person: {},
+    //     student: {},
+    //     job_holder: {},
+    //     other_documents: {},
+    //   })
     } catch (error) {
       toast.error("Something Going Wrong!")
       console.error("Error uploading content", error)
@@ -360,47 +375,138 @@ export default function AddNewVisa() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-2 dark:bg-boxdark py-8 px-4">
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-[1400px] mx-auto" encType="multipart/form-data">
           {/* Header Section */}
-          <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-8 mb-8">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Visa</h1>
-              <p className="text-gray-600 mb-8 text-lg">Fill in the details below to create a new visa entry.</p>
+          <div className="bg-white dark:bg-boxdark-2 rounded-xl shadow-card dark:shadow-none hover:shadow-1 dark:hover:shadow-none transition-shadow p-8 mb-8">
+            <div className="">
+              {/* <h1 className="text-title-xl font-bold text-black dark:text-white mb-2">Add New Visa</h1>
+              <p className="text-body dark:text-bodydark mb-8">Fill in the details below to create a new visa entry.</p> */}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <TextInput
                     name="countryName"
                     label="Country Name"
-                    className="bg-gray-50 focus:bg-white transition-colors"
+                    required
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
                   />
-                  <TextInput name="title" label="Title" className="bg-gray-50 focus:bg-white transition-colors" />
+                  <TextInput
+                    name="title"
+                    required
+                    label="Title"
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+                  />
                 </div>
                 <div className="space-y-6">
                   <SelectInput
                     name="visaType"
+                    required
                     label="Type of Visa"
                     options={[
                       { value: "E-Visa", label: "E-Visa" },
                       { value: "Sticker Visa", label: "Sticker Visa" },
                     ]}
-                    className="bg-gray-50 focus:bg-white transition-colors"
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
                   />
-                  <TextInput name="subtitle" label="Subtitle" className="bg-gray-50 focus:bg-white transition-colors" />
+                  <TextInput
+                    name="subtitle"
+                    required
+                    label="Subtitle"
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+                  />
+
                 </div>
                 <div className="md:col-span-2">
                   <TextInput
                     name="description"
+                    required
                     label="Description"
                     type="textarea"
-                    className="bg-gray-50 focus:bg-white transition-colors min-h-[120px]"
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors min-h-[120px]"
                   />
                 </div>
+                <div className=" md:col-span-2">
+              {noteFields.map((item, index) => (
+                  <TextInput
+                    type="textarea"
+                    key={item.id}
+                    name={`note.${index}.text`}
+                    label={`Note`}
+                    // className="bg-white focus:bg-white transition-colors"
+                    className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors min-h-[120px]"
+                    onChange={(e) => handleNoteChange(index, e.target.value)}
+                  />
+              ))}
+            </div>
               </div>
             </div>
           </div>
+
+            {/* General Information Section */}
+            <div className="bg-white dark:bg-boxdark-2 rounded-xl shadow-card dark:shadow-none hover:shadow-1 dark:hover:shadow-none transition-shadow p-8 mb-8">
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-6">General Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <TextInput
+                name="capital"
+                required
+                label="Capital"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                name="time"
+                label="Local Time"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                name="telephone_code"
+                label="Telephone Code"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                name="bank_time"
+                label="Bank Time"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                type="textarea"
+                name="embassy_address"
+                label="Embassy Address"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors lg:col-span-2"
+              />
+            </div>
+          </div>
+
+           {/* Visa Price Section */}
+           <div className="bg-white dark:bg-boxdark-2 rounded-xl shadow-card dark:shadow-none hover:shadow-1 dark:hover:shadow-none transition-shadow p-8 mb-8">
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-6">Visa Price Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <TextInput
+                required
+                name="visaPrice_mainText"
+                label="Main Text"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                name="visaPrice_price"
+                label="Price"
+                className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+              <TextInput
+                required
+                name="visaPrice_note"
+                label="Note"
+                className="md:col-span-2 bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
+              />
+            </div>
+          </div>
+
 
           {/* Location Images Section */}
           <Accordion title="Location Images">
@@ -408,9 +514,33 @@ export default function AddNewVisa() {
               {locationImageFields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="group relative bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                  className="group relative bg-white dark:bg-boxdark-2 rounded-xl border border-stroke dark:border-strokedark overflow-hidden hover:shadow-md transition-shadow"
                 >
-                  <div className="p-4">
+                     <div className="absolute right-2 top-1 ">
+                  {locationImageFields.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                         if (locationImagePreviews[index]) {
+                            URL.revokeObjectURL(locationImagePreviews[index])
+                          }
+
+                          // Then update the locationImagePreviews array by removing the item at index
+                          const newPreviews = [...locationImagePreviews]
+                          newPreviews.splice(index, 1)
+                          setLocationImagePreviews(newPreviews)
+
+                          // Finally remove the location field
+                          removeLocation(index)
+                        
+                      }}
+                      className="bg-red hover:text-red-700 text-white p-1 rounded-full "
+                    >
+                      <MdClose/>
+                    </button>
+                  )}
+                </div>
+                  <div className="p-6">
                     <div className="space-y-4">
                       <div className="relative">
                         {locationImagePreviews[index] ? (
@@ -425,22 +555,9 @@ export default function AddNewVisa() {
                             <button
                               type="button"
                               onClick={() => removeLocationImage(index)}
-                              className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute top-2 right-2 bg-red text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
+                               <MdClose/>
                             </button>
                           </div>
                         ) : (
@@ -466,6 +583,7 @@ export default function AddNewVisa() {
                             <input
                               type="file"
                               accept="image/*"
+                              required
                               onChange={(e) => handleLocationImageChange(index, e)}
                               className="hidden"
                             />
@@ -475,16 +593,9 @@ export default function AddNewVisa() {
                       <TextInput
                         name={`locationImages.${index}.location`}
                         label="Location Name"
-                        className="bg-gray-50 focus:bg-white transition-colors"
+                        required
+                        className="bg-gray-2 dark:bg-form-input focus:bg-white dark:focus:bg-boxdark transition-colors"
                       />
-                      {locationImageFields.length > 1 && (
-                        <Button
-                          btnType="button"
-                          containerStyles="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                          title="Remove Location"
-                          handleClick={() => removeLocation(index)}
-                        />
-                      )}
                     </div>
                   </div>
                 </div>
@@ -510,7 +621,7 @@ export default function AddNewVisa() {
           </Accordion>
 
           {/* General Information Images Section */}
-          <Accordion title="General Information Images">
+          <Accordion title="General Information Images (Select multiple image together)">
             <div className="space-y-6">
               <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -535,6 +646,7 @@ export default function AddNewVisa() {
                   type="file"
                   name="images"
                   accept="image/*"
+                  required
                   multiple
                   onChange={handleImageChange}
                   className="hidden"
@@ -558,7 +670,7 @@ export default function AddNewVisa() {
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 bg-red text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -577,533 +689,103 @@ export default function AddNewVisa() {
             </div>
           </Accordion>
 
-          {/* General Information Section */}
-          <Accordion title="General Information">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <TextInput name="capital" label="Capital" className="bg-gray-50 focus:bg-white transition-colors" />
-              <TextInput name="time" label="Local Time" className="bg-gray-50 focus:bg-white transition-colors" />
-              <TextInput
-                name="telephone_code"
-                label="Telephone Code"
-                className="bg-gray-50 focus:bg-white transition-colors"
-              />
-              <TextInput name="bank_time" label="Bank Time" className="bg-gray-50 focus:bg-white transition-colors" />
-              <TextInput
-                type="textarea"
-                name="embassy_address"
-                label="Embassy Address"
-                className="bg-gray-50 focus:bg-white transition-colors lg:col-span-2"
-              />
-            </div>
-          </Accordion>
-
-          {/* Notes Section */}
-          <Accordion title="Notes">
-            <div className="space-y-6">
-              {noteFields.map((item, index) => (
-                <div key={item.id} className="p-6 bg-gray-50 rounded-xl">
-                  <TextInput
-                    type="textarea"
-                    name={`note.${index}.text`}
-                    label={`Note ${index + 1}`}
-                    className="bg-white focus:bg-white transition-colors"
-                    onChange={(e) => handleNoteChange(index, e.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
-          </Accordion>
-
           {/* General Documents Section */}
           <Accordion title="General Documents">
             {generalDocumentsFields.map((field, index) => (
-              <div key={field.id} className="mb-6 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <div className="space-y-4">
-                  <TextInput name={`general_documents.${index}.title`} label="Document Title" />
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Document Icon</label>
-                    <div className="flex items-center space-x-4">
-                      {iconPreviews.general_documents[index] ? (
-                        <div className="relative">
-                          <Image
-                            src={iconPreviews.general_documents[index] || "/placeholder.svg"}
-                            alt={`Icon Preview ${index + 1}`}
-                            width={40}
-                            height={40}
-                            className="object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeIcon("general_documents", index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full"
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload("general_documents", index, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-
-                  <TextInput
-                    name={`general_documents.${index}.details.${index}`}
-                    label="Document Details"
-                    type="textarea"
-                    onChange={(e) => handleDetailsChange("general_documents", index, 0, e.target.value)}
-                  />
-                </div>
-              </div>
+                <DocumentSection
+                key={field.id}
+                fieldName="general_documents"
+                index={index}
+                iconPreview={iconPreviews.general_documents[index]}
+                handleFileUpload={handleFileUpload}
+                removeIcon={removeIcon}
+                handleDetailsChange={handleDetailsChange}
+                generalDocumentsFieldsLength={generalDocumentsFields.length}
+                removeGeneralDocument={removeGeneralDocument}
+              />
             ))}
+            <Button
+                btnType="button"
+                containerStyles="bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
+                title="Add Another General Document"
+                icon={
+                    <FaPlus/>
+                }
+                handleClick={() => appendGeneralDocument({ title: "", details: [""], icon: {} as File })}
+              />
           </Accordion>
 
           {/* Business Person Documents Section */}
           <Accordion title="Business Person Documents">
             {businessPersonFields.map((field, index) => (
-              <div key={field.id} className="mb-6 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <div className="space-y-4">
-                  <TextInput name={`business_person.${index}.title`} label="Document Title" />
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Document Icon</label>
-                    <div className="flex items-center space-x-4">
-                      {iconPreviews.business_person[index] ? (
-                        <div className="relative">
-                          <Image
-                            src={iconPreviews.business_person[index] || "/placeholder.svg"}
-                            alt={`Icon Preview ${index + 1}`}
-                            width={40}
-                            height={40}
-                            className="object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeIcon("business_person", index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full"
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload("business_person", index, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-
-                  <TextInput
-                    name={`business_person.${index}.details.${index}`}
-                    label="Document Details"
-                    type="textarea"
-                    onChange={(e) => handleDetailsChange("business_person", index, 0, e.target.value)}
-                  />
-                </div>
-              </div>
+               <DocumentSection
+               key={field.id}
+               fieldName="business_person"
+               index={index}
+               iconPreview={iconPreviews.business_person[index]}
+               handleFileUpload={handleFileUpload}
+               removeIcon={removeIcon}
+               handleDetailsChange={handleDetailsChange}
+             />
             ))}
           </Accordion>
 
           {/* Student Documents Section */}
           <Accordion title="Student Documents">
             {studentFields.map((field, index) => (
-              <div key={field.id} className="mb-6 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <div className="space-y-4">
-                  <TextInput name={`student.${index}.title`} label="Document Title" />
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Document Icon</label>
-                    <div className="flex items-center space-x-4">
-                      {iconPreviews.student[index] ? (
-                        <div className="relative">
-                          <Image
-                            src={iconPreviews.student[index] || "/placeholder.svg"}
-                            alt={`Icon Preview ${index + 1}`}
-                            width={40}
-                            height={40}
-                            className="object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeIcon("student", index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full"
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload("student", index, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-
-                  <TextInput
-                    name={`student.${index}.details.0`}
-                    label="Document Details"
-                    type="textarea"
-                    onChange={(e) => handleDetailsChange("student", index, 0, e.target.value)}
-                  />
-                </div>
-              </div>
+                 <DocumentSection
+                 key={field.id}
+                 fieldName="student"
+                 index={index}
+                 iconPreview={iconPreviews.student[index]}
+                 handleFileUpload={handleFileUpload}
+                 removeIcon={removeIcon}
+                 handleDetailsChange={handleDetailsChange}
+               />
             ))}
           </Accordion>
 
           {/* Job Holder Documents Section */}
           <Accordion title="Job Holder Documents">
             {jobHolderFields.map((field, index) => (
-              <div key={field.id} className="mb-6 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <div className="space-y-4">
-                  <TextInput name={`job_holder.${index}.title`} label="Document Title" />
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Document Icon</label>
-                    <div className="flex items-center space-x-4">
-                      {iconPreviews.job_holder[index] ? (
-                        <div className="relative">
-                          <Image
-                            src={iconPreviews.job_holder[index] || "/placeholder.svg"}
-                            alt={`Icon Preview ${index + 1}`}
-                            width={40}
-                            height={40}
-                            className="object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeIcon("job_holder", index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full"
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload("job_holder", index, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-
-                  <TextInput
-                    name={`job_holder.${index}.details.${index}`}
-                    label="Document Details"
-                    type="textarea"
-                    onChange={(e) => handleDetailsChange("job_holder", index, 0, e.target.value)}
-                  />
-                </div>
-              </div>
+                 <DocumentSection
+                 key={field.id}
+                 fieldName="job_holder"
+                 index={index}
+                 iconPreview={iconPreviews.job_holder[index]}
+                 handleFileUpload={handleFileUpload}
+                 removeIcon={removeIcon}
+                 handleDetailsChange={handleDetailsChange}
+               />
             ))}
           </Accordion>
 
           {/* Other Documents Section */}
           <Accordion title="Other Documents">
             {otherDocumentsFields.map((field, index) => (
-              <div key={field.id} className="mb-6 border border-gray-200 rounded-lg p-4 shadow-sm">
-                <div className="space-y-4">
-                  <TextInput name={`other_documents.${index}.title`} label="Document Title" />
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Document Icon</label>
-                    <div className="flex items-center space-x-4">
-                      {iconPreviews.other_documents[index] ? (
-                        <div className="relative">
-                          <Image
-                            src={iconPreviews.other_documents[index] || "/placeholder.svg"}
-                            alt={`Icon Preview ${index + 1}`}
-                            width={40}
-                            height={40}
-                            className="object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeIcon("other_documents", index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full"
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <svg
-                            className="w-5 h-5 text-gray-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload("other_documents", index, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
-
-                  <TextInput
-                    name={`other_documents.${index}.details.${index}`}
-                    label="Document Details"
-                    type="textarea"
-                    onChange={(e) => handleDetailsChange("other_documents", index, 0, e.target.value)}
-                  />
-                </div>
-              </div>
+                 <DocumentSection
+                 key={field.id}
+                 fieldName="other_documents"
+                 index={index}
+                 iconPreview={iconPreviews.other_documents[index]}
+                 handleFileUpload={handleFileUpload}
+                 removeIcon={removeIcon}
+                 handleDetailsChange={handleDetailsChange}
+               />
             ))}
           </Accordion>
-
-          {/* Visa Price Section */}
-          <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-8 mb-8">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">Visa Price Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <TextInput
-                name="visaPrice_mainText"
-                label="Main Text"
-                className="bg-gray-50 focus:bg-white transition-colors"
-              />
-              <TextInput name="visaPrice_price" label="Price" className="bg-gray-50 focus:bg-white transition-colors" />
-              <TextInput
-                name="visaPrice_note"
-                label="Note"
-                className="md:col-span-2 bg-gray-50 focus:bg-white transition-colors"
-              />
-            </div>
-          </div>
-
           {/* Submit Button */}
           <div className="flex justify-center mt-12 mb-16">
             <Button
               btnType="submit"
               containerStyles={`
-                ${isLoading ? "bg-gray-400" : "bg-teal-600 hover:bg-teal-700"} 
-                text-white font-medium py-4 px-12 rounded-xl shadow-lg 
-                hover:shadow-xl transition-all duration-300 flex items-center 
+                ${isLoading ? "bg-bodydark" : "bg-teal-600 hover:bg-teal-700"} 
+                text-white font-medium py-2 px-6 rounded-lg shadow-1 
+                hover:shadow-2 transition-all duration-300 flex items-center 
                 justify-center min-w-[200px]
               `}
               textStyles="text-lg"
               title={isLoading ? "Saving..." : "Save Visa Information"}
-              icon={
-                isLoading ? (
-                  <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                )
-              }
             //   disabled={isLoading}
             />
           </div>
@@ -1112,4 +794,3 @@ export default function AddNewVisa() {
     </div>
   )
 }
-
