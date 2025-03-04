@@ -4,6 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AddPackage from "@/components/Package/AddPackage";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 
+
 const Page = () => {
   useRedirectHelper("/updatePackage");
   return (
