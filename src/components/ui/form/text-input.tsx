@@ -61,7 +61,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
           />
         )}
 
-        {errorMessage && <p className="mt-1 text-sm text-red-500">{errorMessage}</p>}
+        {errorMessage && <p className="mt-1 text-sm text-red">{errorMessage}</p>}
       </div>
     )
   },

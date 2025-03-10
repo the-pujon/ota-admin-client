@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import Providers from "@/lib/Providers";
 import { Toaster } from "react-hot-toast";
+// import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const metadata: Metadata = {
   title: "TripNest Admin",
@@ -30,10 +31,12 @@ export default function RootLayout({
     <Providers>
     <html lang="en">
       <body suppressHydrationWarning={true}>
+        {/* <DefaultLayout> */}
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
           <Toaster position="top-right"/>
           {loading ? <Loader /> : children}
         </div>
+        {/* </DefaultLayout> */}
       </body>
     </html>
     </Providers>

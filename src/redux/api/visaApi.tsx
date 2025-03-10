@@ -4,7 +4,7 @@ import { getBaseUrl } from '@/helpers/config/envConfig';
 
 const visaApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    // addVisa: build.mutation({
+     // addVisa: build.mutation({
     //   query: (formData) => ({
     //     url: "/visa/addVisaInfo",
     //     method: "POST",
@@ -34,12 +34,14 @@ const visaApi = baseApi.injectEndpoints({
     //   },
     // }),
 
-    addVisa: build.mutation({
+    addVisaold: build.mutation({
       queryFn: async (formData): Promise<{ data: unknown } | { error: { status: number; data: unknown } }> => {
         try {
           const baseUrl = getBaseUrl();
+
+          console.log(`${baseUrl}/v2/visa/addVisaInfo`)
         
-          const response = await fetch(`${baseUrl}/visa/addVisaInfo`, {
+          const response = await fetch(`${baseUrl}/v2/visa/addVisaInfo`, {
             method: 'POST',
             body: formData, 
           });
@@ -61,6 +63,7 @@ const visaApi = baseApi.injectEndpoints({
       },
     }),
     updateVisa: build.mutation({
+
       queryFn: async (formDataToSend): Promise<{ data: unknown } | { error: { status: number; data: unknown } }> => {
         try {
           const baseUrl = getBaseUrl();
@@ -89,6 +92,7 @@ const visaApi = baseApi.injectEndpoints({
 
 
     listVisa: build.mutation({
+
       query: () => ({
         url:"/visa/countries/allVisaData",
         method:"GET",
