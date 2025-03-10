@@ -484,7 +484,11 @@ export default function AddVisaV2() {
     <div className="min-h-screen bg-gray-2 px-4 py-8 dark:bg-boxdark">
       <FormProvider {...methods}>
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit, (errors) => {
+            // console.error("Form validation errors:", errors)
+            toast.error("Please fill all required fields")
+            return false
+          })}
           className="mx-auto max-w-[1400px]"
           encType="multipart/form-data"
         >

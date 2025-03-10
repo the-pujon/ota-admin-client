@@ -628,7 +628,11 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   return (
     <div className="min-h-screen bg-gray-2 px-4 py-8 dark:bg-boxdark">
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-[1400px]" encType="multipart/form-data">
+        <form onSubmit={handleSubmit(onSubmit, (errors) => {
+            console.error("Form validation errors:", errors)
+            toast.error("Please fill all required fields")
+            return false
+          })} className="mx-auto max-w-[1400px]" encType="multipart/form-data">
           {/* Add Error Summary at the top of the form */}
           <ErrorSummary errors={errors} title="Please fix the following errors:" />
 

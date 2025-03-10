@@ -283,12 +283,12 @@ axiosInstance.interceptors.response.use(
         
         // Make sure we have the latest CSRF token if your API uses it
         // This is only needed if your API requires a CSRF token in headers
-        if (data.csrfToken) {
-          retryConfig.headers = {
-            ...retryConfig.headers,
-            'X-CSRF-Token': data.csrfToken
-          };
-        }
+        // if (data.csrfToken) {
+        //   retryConfig.headers = {
+        //     ...retryConfig.headers,
+        //     'X-CSRF-Token': data.csrfToken
+        //   };
+        // }
         
         // Return the retry request
         return axiosInstance(retryConfig);
