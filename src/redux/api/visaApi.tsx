@@ -122,4 +122,4 @@ const visaApi = baseApi.injectEndpoints({
 
 })
 
-export const { useAddVisaMutation,useListVisaMutation,useEditVisaMutation, useViewVisaMutation, useUpdateVisaMutation } = visaApi
+export const { useListVisaMutation,useEditVisaMutation, useViewVisaMutation, useUpdateVisaMutation } = visaApi

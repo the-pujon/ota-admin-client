@@ -31,7 +31,7 @@ type DocumentFieldName =
 
 export default function AddVisaV2() {
   const [addVisa, { isLoading, error }] = useAddVisaMutation();
-  console.log("error is here", error);
+  // console.log("error is here", error);
 
   const methods = useForm<VisaFormData>({
     resolver: zodResolver(VisaFormSchema),
@@ -62,7 +62,14 @@ export default function AddVisaV2() {
   });
 
   // Destructure the methods object
-  const { control, handleSubmit, setValue, reset, formState: { errors }, getValues} = methods;
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+    getValues,
+  } = methods;
 
   //note field array
   const {
@@ -285,7 +292,7 @@ export default function AddVisaV2() {
   };
 
   const removeLocationImage = (index: number) => {
-    console.log("locationImageFields.length", locationImageFields.length);
+    // console.log("locationImageFields.length", locationImageFields.length);
     const newImagePreviews = [...locationImagePreviews];
     if (newImagePreviews[index]) {
       URL.revokeObjectURL(newImagePreviews[index]);
@@ -318,24 +325,24 @@ export default function AddVisaV2() {
     index: number,
     value: string,
   ) => {
-    console.log("Raw Input:", value);
+    // console.log("Raw Input:", value);
 
     const detailsArray = value
       .split(",")
       .map((detail) => detail.trim())
       .filter((detail) => detail !== "");
 
-    console.log("Processed Array:", detailsArray);
+    // console.log("Processed Array:", detailsArray);
 
     setValue(`${fieldName}.${index}.details`, detailsArray);
 
     // Debug: Check if the value updates properly
-    setTimeout(() => {
-      console.log(
-        "Updated Value in Form State:",
-        getValues(`${fieldName}.${index}.details`),
-      );
-    }, 100);
+    // setTimeout(() => {
+    //   console.log(
+    //     "Updated Value in Form State:",
+    //     getValues(`${fieldName}.${index}.details`),
+    //   );
+    // }, 100);
   };
 
   const onSubmit: SubmitHandler<VisaFormData> = async (data) => {
@@ -417,34 +424,34 @@ export default function AddVisaV2() {
       appendDocumentFiles(formData, data.other_documents, "other_documents");
 
       // For debugging
-      const formDataEntries = Array.from(formData.entries()).reduce(
-        (acc, [key, value]) => {
-          acc[key] =
-            typeof value === "string"
-              ? value
-              : `[File: ${(value as File).name}]`;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
+      // const formDataEntries = Array.from(formData.entries()).reduce(
+      //   (acc, [key, value]) => {
+      //     acc[key] =
+      //       typeof value === "string"
+      //         ? value
+      //         : `[File: ${(value as File).name}]`;
+      //     return acc;
+      //   },
+      //   {} as Record<string, string>,
+      // );
 
-      console.log("FormData entries:", formDataEntries);
+      // console.log("FormData entries:", formDataEntries);
 
       // Submit the data
-      const response = await addVisa(formData).unwrap();
+      // const response = await addVisa(formData).unwrap();
       toast.success("Visa information added successfully!");
 
       // Reset form after successful submission
-      reset();
-      setImagePreviews([]);
-      setLocationImagePreviews([]);
-      setIconPreviews({
-        general_documents: {},
-        business_person: {},
-        student: {},
-        job_holder: {},
-        other_documents: {},
-      });
+      // reset();
+      // setImagePreviews([]);
+      // setLocationImagePreviews([]);
+      // setIconPreviews({
+      //   general_documents: {},
+      //   business_person: {},
+      //   student: {},
+      //   job_holder: {},
+      //   other_documents: {},
+      // });
     } catch (error) {
       console.error("Error adding visa:", error);
       toast.error("Failed to add visa information. Please try again.");
@@ -453,7 +460,7 @@ export default function AddVisaV2() {
 
   // Helper for preparing document data without files
   const prepareDocumentData = (docs: any[]) => {
-    console.log(docs);
+    // console.log(docs);
     return docs
       .filter(
         (doc) =>
@@ -486,8 +493,8 @@ export default function AddVisaV2() {
         <form
           onSubmit={handleSubmit(onSubmit, (errors) => {
             // console.error("Form validation errors:", errors)
-            toast.error("Please fill all required fields")
-            return false
+            toast.error("Please fill all required fields");
+            return false;
           })}
           className="mx-auto max-w-[1400px]"
           encType="multipart/form-data"
@@ -549,7 +556,7 @@ export default function AddVisaV2() {
                   />
                 </div>
                 <div className=" md:col-span-2">
-                  {noteFields.map((item, index) => (
+                  {/* {noteFields.map((item, index) => (
                     <TextInput
                       type="textarea"
                       key={item.id}
@@ -559,7 +566,40 @@ export default function AddVisaV2() {
                       className="min-h-[120px] bg-gray-2 transition-colors focus:bg-white dark:bg-form-input dark:focus:bg-boxdark"
                       onChange={(e) => handleNoteChange(index, e.target.value)}
                     />
+                  ))} */}
+                  {noteFields.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="relative flex w-full flex-col space-y-4"
+                    >
+                      <TextInput
+                        type="textarea"
+                        name={`note.${index}.text`}
+                        label={`Notes ${index + 1}`}
+                        onChange={(e) =>
+                          handleNoteChange(index, e.target.value)
+                        }
+                      />
+
+                      <div className="mt-12">
+                        {noteFields.length > 1 && (
+                          <Button
+                            btnType="button"
+                            containerStyles="px-2 py-0 bg-transparent text-red text-xl rounded absolute right-0 top-0"
+                            title="Remove"
+                            icon={<span>x</span>}
+                            handleClick={() => removeNote(index)}
+                          />
+                        )}
+                      </div>
+                    </div>
                   ))}
+                  <Button
+                    btnType="button"
+                    containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+                    title="Add Another Note"
+                    handleClick={() => appendNote({ text: "" })}
+                  />
                 </div>
               </div>
             </div>

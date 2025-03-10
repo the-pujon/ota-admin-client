@@ -1,8 +1,8 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import AddNewVisa from "@/components/Visa/AddNewVisa";
-import AddVisa from "@/components/Visa/AddVisa";
+// import AddNewVisa from "@/components/Visa/AddNewVisa";
+// import AddVisa from "@/components/Visa/AddVisa";
 import AddVisaV2 from "@/components/Visa/AddVisaV2";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 

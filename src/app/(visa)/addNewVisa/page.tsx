@@ -1,7 +1,7 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import AddNewVisa from "@/components/Visa/AddNewVisa";
+// import AddNewVisa from "@/components/Visa/AddNewVisa";
 import useRedirectHelper from "@/utils/authRedirectHelper";
 
 const Page = () => {
@@ -11,7 +11,7 @@ const Page = () => {
     <DefaultLayout>
       <div className="flex flex-col gap-10">
         <Breadcrumb pageName="Add New Visa" />
-        <AddNewVisa/>
+        {/* <AddNewVisa/> */}
       </div>
     </DefaultLayout>
   );

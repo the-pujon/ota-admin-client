@@ -1,32 +1,51 @@
-"use client"
-import { useState, useEffect } from "react"
-import type React from "react"
+"use client";
+import { useState, useEffect } from "react";
+import type React from "react";
 
-import { useForm, FormProvider, type SubmitHandler, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import Button from "../CustomButton"
-import toast from "react-hot-toast"
-import Image from "next/image"
-import { TextInput } from "../ui/form/text-input"
-import { SelectInput } from "../ui/form/select-input"
-import { MdClose } from "react-icons/md"
-import { FaPlus } from "react-icons/fa"
-import { Accordion } from "../Accordion/Accordion"
-import DocumentSection from "./DocumentInput"
-import { useUpdateVisaByCountryMutation, useVisaDetailsByCountryQuery } from "@/redux/api/visaApiV2"
-import Loader from "../common/Loader"
-import ErrorSummary from "./ErrorSummary"
-import { VisaFormSchema, type VisaFormData, isFile, isStringUrl } from "@/schema/visaUpdateSchema"
+import {
+  useForm,
+  FormProvider,
+  type SubmitHandler,
+  useFieldArray,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Button from "../CustomButton";
+import toast from "react-hot-toast";
+import Image from "next/image";
+import { TextInput } from "../ui/form/text-input";
+import { SelectInput } from "../ui/form/select-input";
+import { MdClose } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
+import { Accordion } from "../Accordion/Accordion";
+import DocumentSection from "./DocumentInput";
+import {
+  useUpdateVisaByCountryMutation,
+  useVisaDetailsByCountryQuery,
+} from "@/redux/api/visaApiV2";
+import Loader from "../common/Loader";
+import ErrorSummary from "./ErrorSummary";
+import {
+  VisaFormSchema,
+  type VisaFormData,
+  isFile,
+  isStringUrl,
+} from "@/schema/visaUpdateSchema";
 
-type DocumentFieldName = "general_documents" | "business_person" | "student" | "job_holder" | "other_documents"
+type DocumentFieldName =
+  | "general_documents"
+  | "business_person"
+  | "student"
+  | "job_holder"
+  | "other_documents";
 
 export default function EditVisaV2({ countryName }: { countryName: string }) {
   const { data: allVisaData, isLoading } = useVisaDetailsByCountryQuery({
     countryName: countryName,
-  })
-  const [updateVisa, { isLoading: isUpdating }] = useUpdateVisaByCountryMutation()
+  });
+  const [updateVisa, { isLoading: isUpdating }] =
+    useUpdateVisaByCountryMutation();
 
-  const visaData = allVisaData?.data
+  const visaData = allVisaData?.data;
 
   const methods = useForm<VisaFormData>({
     resolver: zodResolver(VisaFormSchema),
@@ -54,7 +73,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
       visaPrice_price: "",
       visaPrice_note: "",
     },
-  })
+  });
 
   const {
     control,
@@ -63,17 +82,17 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
     reset,
     formState: { errors },
     getValues,
-  } = methods
+  } = methods;
 
   // File error state
   const [fileErrors, setFileErrors] = useState<{
-    general_documents: { [key: number]: string | null }
-    business_person: { [key: number]: string | null }
-    student: { [key: number]: string | null }
-    job_holder: { [key: number]: string | null }
-    other_documents: { [key: number]: string | null }
-    locationImages: { [key: number]: string | null }
-    generalImages: string | null
+    general_documents: { [key: number]: string | null };
+    business_person: { [key: number]: string | null };
+    student: { [key: number]: string | null };
+    job_holder: { [key: number]: string | null };
+    other_documents: { [key: number]: string | null };
+    locationImages: { [key: number]: string | null };
+    generalImages: string | null;
   }>({
     general_documents: {},
     business_person: {},
@@ -82,7 +101,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
     other_documents: {},
     locationImages: {},
     generalImages: null,
-  })
+  });
 
   const {
     fields: noteFields,
@@ -91,7 +110,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "note",
-  })
+  });
 
   const {
     fields: generalDocumentsFields,
@@ -100,7 +119,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "general_documents",
-  })
+  });
 
   const {
     fields: businessPersonFields,
@@ -109,7 +128,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "business_person",
-  })
+  });
 
   const {
     fields: studentFields,
@@ -118,7 +137,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "student",
-  })
+  });
 
   const {
     fields: jobHolderFields,
@@ -127,7 +146,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "job_holder",
-  })
+  });
 
   const {
     fields: otherDocumentsFields,
@@ -136,24 +155,26 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "other_documents",
-  })
+  });
 
   const [iconPreviews, setIconPreviews] = useState<{
-    general_documents: { [key: number]: string }
-    business_person: { [key: number]: string }
-    student: { [key: number]: string }
-    job_holder: { [key: number]: string }
-    other_documents: { [key: number]: string }
+    general_documents: { [key: number]: string };
+    business_person: { [key: number]: string };
+    student: { [key: number]: string };
+    job_holder: { [key: number]: string };
+    other_documents: { [key: number]: string };
   }>({
     general_documents: {},
     business_person: {},
     student: {},
     job_holder: {},
     other_documents: {},
-  })
+  });
 
-  const [imagePreviews, setImagePreviews] = useState<string[]>([])
-  const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [locationImagePreviews, setLocationImagePreviews] = useState<string[]>(
+    [],
+  );
 
   useEffect(() => {
     if (visaData) {
@@ -176,7 +197,8 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
         visaPrice_note: visaData.visaCountryId.visaPrice_note,
         images: visaData.visaCountryId.images || [],
         locationImages:
-          visaData.visaCountryId.locationImages && visaData.visaCountryId.locationImages.length > 0
+          visaData.visaCountryId.locationImages &&
+          visaData.visaCountryId.locationImages.length > 0
             ? visaData.visaCountryId.locationImages.map((loc: any) => ({
                 _id: loc._id,
                 image: loc.image,
@@ -228,184 +250,200 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 icon: doc.icon,
               }))
             : [{ title: "", details: [""], icon: {} as File }],
-      })
+      });
 
       // Set image previews
-      setImagePreviews(visaData.visaCountryId.images || [])
-      setLocationImagePreviews(visaData.visaCountryId.locationImages.map((item: any) => item.image) || [])
+      setImagePreviews(visaData.visaCountryId.images || []);
+      setLocationImagePreviews(
+        visaData.visaCountryId.locationImages.map((item: any) => item.image) ||
+          [],
+      );
 
       // Set icon previews
       const newIconPreviews: {
-        general_documents: { [key: number]: string }
-        business_person: { [key: number]: string }
-        student: { [key: number]: string }
-        job_holder: { [key: number]: string }
-        other_documents: { [key: number]: string }
+        general_documents: { [key: number]: string };
+        business_person: { [key: number]: string };
+        student: { [key: number]: string };
+        job_holder: { [key: number]: string };
+        other_documents: { [key: number]: string };
       } = {
         general_documents: {},
         business_person: {},
         student: {},
         job_holder: {},
         other_documents: {},
-      }
+      };
 
       Object.entries(newIconPreviews).forEach(([key, value]) => {
         if (visaData[key] && Array.isArray(visaData[key])) {
           visaData[key].forEach((item: any, index: number) => {
             if (item && item.icon) {
-              newIconPreviews[key as keyof typeof newIconPreviews][index] = item.icon
+              newIconPreviews[key as keyof typeof newIconPreviews][index] =
+                item.icon;
             }
-          })
+          });
         }
-      })
+      });
 
-      setIconPreviews(newIconPreviews)
+      setIconPreviews(newIconPreviews);
     }
-  }, [visaData, reset])
+  }, [visaData, reset]);
 
   // Add a file validation function
   const validateFile = (file: File, maxSizeMB = 10): string | null => {
     // Check file size (default max 10MB)
     if (file.size > maxSizeMB * 1024 * 1024) {
-      return `File size exceeds ${maxSizeMB}MB limit`
+      return `File size exceeds ${maxSizeMB}MB limit`;
     }
 
     // Check file type (only images)
     if (!file.type.startsWith("image/")) {
-      return "Only image files are allowed"
+      return "Only image files are allowed";
     }
 
-    return null
-  }
+    return null;
+  };
 
-  const handleFileUpload = (fieldName: DocumentFieldName, index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+  const handleFileUpload = (
+    fieldName: DocumentFieldName,
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = e.target.files;
     if (files && files.length > 0) {
-      const file = files[0]
+      const file = files[0];
 
       // Validate the file
-      const error = validateFile(file)
+      const error = validateFile(file);
       if (error) {
         // Update the file error state
-        const newFileErrors = { ...fileErrors }
+        const newFileErrors = { ...fileErrors };
         newFileErrors[fieldName] = {
           ...newFileErrors[fieldName],
           [index]: error,
-        }
-        setFileErrors(newFileErrors)
-        toast.error(error)
-        return
+        };
+        setFileErrors(newFileErrors);
+        toast.error(error);
+        return;
       }
 
       // Clear any previous error
-      const newFileErrors = { ...fileErrors }
+      const newFileErrors = { ...fileErrors };
       newFileErrors[fieldName] = {
         ...newFileErrors[fieldName],
         [index]: null,
-      }
-      setFileErrors(newFileErrors)
+      };
+      setFileErrors(newFileErrors);
 
-      const newIconPreviews = { ...iconPreviews }
-      if (newIconPreviews[fieldName][index] && !isStringUrl(newIconPreviews[fieldName][index])) {
-        URL.revokeObjectURL(newIconPreviews[fieldName][index])
+      const newIconPreviews = { ...iconPreviews };
+      if (
+        newIconPreviews[fieldName][index] &&
+        !isStringUrl(newIconPreviews[fieldName][index])
+      ) {
+        URL.revokeObjectURL(newIconPreviews[fieldName][index]);
       }
 
       newIconPreviews[fieldName] = {
         ...newIconPreviews[fieldName],
         [index]: URL.createObjectURL(file),
-      }
-      setIconPreviews(newIconPreviews)
-      methods.setValue(`${fieldName}.${index}.icon`, file)
+      };
+      setIconPreviews(newIconPreviews);
+      methods.setValue(`${fieldName}.${index}.icon`, file);
     }
-  }
+  };
 
   const removeIcon = (fieldName: DocumentFieldName, index: number) => {
-    const newIconPreviews = { ...iconPreviews }
+    const newIconPreviews = { ...iconPreviews };
     if (newIconPreviews[fieldName][index]) {
       // Only revoke if it's a blob URL (not a string URL from the server)
       if (
         typeof newIconPreviews[fieldName][index] === "string" &&
         newIconPreviews[fieldName][index].startsWith("blob:")
       ) {
-        URL.revokeObjectURL(newIconPreviews[fieldName][index])
+        URL.revokeObjectURL(newIconPreviews[fieldName][index]);
       }
-      delete newIconPreviews[fieldName][index]
-      setIconPreviews(newIconPreviews)
-      methods.setValue(`${fieldName}.${index}.icon`, {} as File)
+      delete newIconPreviews[fieldName][index];
+      setIconPreviews(newIconPreviews);
+      methods.setValue(`${fieldName}.${index}.icon`, {} as File);
 
       // Clear any error when removing the icon
-      const newFileErrors = { ...fileErrors }
+      const newFileErrors = { ...fileErrors };
       newFileErrors[fieldName] = {
         ...newFileErrors[fieldName],
         [index]: null,
-      }
-      setFileErrors(newFileErrors)
+      };
+      setFileErrors(newFileErrors);
     }
-  }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
-      const fileArray = Array.from(files)
+      const fileArray = Array.from(files);
 
       // Validate each file
-      let hasError = false
+      let hasError = false;
       for (const file of fileArray) {
-        const error = validateFile(file)
+        const error = validateFile(file);
         if (error) {
           setFileErrors({
             ...fileErrors,
             generalImages: error,
-          })
-          toast.error(error)
-          hasError = true
-          break
+          });
+          toast.error(error);
+          hasError = true;
+          break;
         }
       }
 
-      if (hasError) return
+      if (hasError) return;
 
       // Clear any previous error
       setFileErrors({
         ...fileErrors,
         generalImages: null,
-      })
+      });
 
-      const newImagePreviews = fileArray.map((file) => URL.createObjectURL(file))
+      const newImagePreviews = fileArray.map((file) =>
+        URL.createObjectURL(file),
+      );
 
       // Get the current images from React Hook Form
-      const currentImages = methods.getValues("images") || []
+      const currentImages = methods.getValues("images") || [];
 
       // Merge new images with existing ones
-      const updatedImages = [...currentImages, ...fileArray]
+      const updatedImages = [...currentImages, ...fileArray];
 
-      setImagePreviews((prev) => [...prev, ...newImagePreviews])
+      setImagePreviews((prev) => [...prev, ...newImagePreviews]);
 
       // Update React Hook Form field
-      methods.setValue("images", updatedImages, { shouldValidate: true })
+      methods.setValue("images", updatedImages, { shouldValidate: true });
     }
-  }
+  };
 
   const removeImage = (index: number) => {
-    const newImagePreviews = [...imagePreviews]
+    const newImagePreviews = [...imagePreviews];
     // Only revoke if it's a blob URL (not a string URL from the server)
-    if (typeof newImagePreviews[index] === "string" && newImagePreviews[index].startsWith("blob:")) {
-      URL.revokeObjectURL(newImagePreviews[index])
+    if (
+      typeof newImagePreviews[index] === "string" &&
+      newImagePreviews[index].startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(newImagePreviews[index]);
     }
-    newImagePreviews.splice(index, 1)
-    setImagePreviews(newImagePreviews)
+    newImagePreviews.splice(index, 1);
+    setImagePreviews(newImagePreviews);
 
-    const currentImages = methods.getValues("images")
-    const newImages = [...currentImages]
-    newImages.splice(index, 1)
-    setValue("images", newImages)
+    const currentImages = methods.getValues("images");
+    const newImages = [...currentImages];
+    newImages.splice(index, 1);
+    setValue("images", newImages);
 
     // Clear any error when removing an image
     setFileErrors({
       ...fileErrors,
       generalImages: null,
-    })
-  }
+    });
+  };
 
   const {
     fields: locationImageFields,
@@ -414,100 +452,118 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
   } = useFieldArray({
     control,
     name: "locationImages",
-  })
+  });
 
-  if (isLoading) return <Loader />
+  if (isLoading) return <Loader />;
 
-  const handleLocationImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+  const handleLocationImageChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = e.target.files;
     if (files && files.length > 0) {
-      const file = files[0]
+      const file = files[0];
 
       // Validate the file
-      const error = validateFile(file)
+      const error = validateFile(file);
       if (error) {
         // Update the file error state
-        const newFileErrors = { ...fileErrors }
+        const newFileErrors = { ...fileErrors };
         newFileErrors.locationImages = {
           ...newFileErrors.locationImages,
           [index]: error,
-        }
-        setFileErrors(newFileErrors)
-        toast.error(error)
-        return
+        };
+        setFileErrors(newFileErrors);
+        toast.error(error);
+        return;
       }
 
       // Clear any previous error
-      const newFileErrors = { ...fileErrors }
+      const newFileErrors = { ...fileErrors };
       newFileErrors.locationImages = {
         ...newFileErrors.locationImages,
         [index]: null,
-      }
-      setFileErrors(newFileErrors)
+      };
+      setFileErrors(newFileErrors);
 
-      const newImagePreviews = [...locationImagePreviews]
+      const newImagePreviews = [...locationImagePreviews];
       // Only revoke if it's a blob URL (not a string URL from the server)
-      if (typeof newImagePreviews[index] === "string" && newImagePreviews[index].startsWith("blob:")) {
-        URL.revokeObjectURL(newImagePreviews[index])
+      if (
+        typeof newImagePreviews[index] === "string" &&
+        newImagePreviews[index].startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(newImagePreviews[index]);
       }
-      newImagePreviews[index] = URL.createObjectURL(file)
-      setLocationImagePreviews(newImagePreviews)
-      setValue(`locationImages.${index}.image`, file)
+      newImagePreviews[index] = URL.createObjectURL(file);
+      setLocationImagePreviews(newImagePreviews);
+      setValue(`locationImages.${index}.image`, file);
     }
-  }
+  };
 
   const removeLocationImage = (index: number) => {
-    const newImagePreviews = [...locationImagePreviews]
+    const newImagePreviews = [...locationImagePreviews];
     if (newImagePreviews[index]) {
       // Only revoke if it's a blob URL (not a string URL from the server)
-      if (typeof newImagePreviews[index] === "string" && newImagePreviews[index].startsWith("blob:")) {
-        URL.revokeObjectURL(newImagePreviews[index])
+      if (
+        typeof newImagePreviews[index] === "string" &&
+        newImagePreviews[index].startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(newImagePreviews[index]);
       }
-      newImagePreviews[index] = ""
-      setLocationImagePreviews(newImagePreviews)
-      setValue(`locationImages.${index}.image`, {} as File)
+      newImagePreviews[index] = "";
+      setLocationImagePreviews(newImagePreviews);
+      setValue(`locationImages.${index}.image`, {} as File);
 
       // Clear any error when removing the location image
-      const newFileErrors = { ...fileErrors }
+      const newFileErrors = { ...fileErrors };
       newFileErrors.locationImages = {
         ...newFileErrors.locationImages,
         [index]: null,
-      }
-      setFileErrors(newFileErrors)
+      };
+      setFileErrors(newFileErrors);
     }
-  }
+  };
 
   const handleNoteChange = (index: number, data: string) => {
-    const plainText = data.replace(/<\/?[^>]+(>|$)/g, "")
-    setValue(`note.${index}.text` as const, plainText)
-  }
+    const plainText = data.replace(/<\/?[^>]+(>|$)/g, "");
+    setValue(`note.${index}.text` as const, plainText);
+  };
 
-  const handleDetailsChange = (fieldName: DocumentFieldName, index: number, value: string) => {
+  const handleDetailsChange = (
+    fieldName: DocumentFieldName,
+    index: number,
+    value: string,
+  ) => {
     const detailsArray = value
       .split(",")
       .map((detail) => detail.trim())
-      .filter((detail) => detail !== "")
-    setValue(`${fieldName}.${index}.details`, detailsArray)
-  }
+      .filter((detail) => detail !== "");
+    setValue(`${fieldName}.${index}.details`, detailsArray);
+  };
 
   const onSubmit: SubmitHandler<VisaFormData> = async (data) => {
-    console.log(data.images)
-
+    // console.log(data.images)
 
     // Check if all location images have both image and location
     const invalidLocations = data.locationImages.filter(
-      (item) => !item.location.trim() || (!isFile(item.image) && !isStringUrl(item.image))
+      (item) =>
+        !item.location.trim() ||
+        (!isFile(item.image) && !isStringUrl(item.image)),
     );
     if (invalidLocations.length > 0) {
-      toast.error("At lease one location image is required and all location images must have both an image and a location name");
+      toast.error(
+        "At lease one location image is required and all location images must have both an image and a location name",
+      );
       return;
     }
-    console.log(data)
+    // console.log(data)
     try {
-      const formData = new FormData()
+      const formData = new FormData();
 
       // Separate existing images (string URLs) from new uploads (File objects)
-      const existingImages: string[] = data.images.filter((img): img is string => isStringUrl(img))
+      const existingImages: string[] = data.images.filter(
+        (img): img is string => isStringUrl(img),
+      );
 
       // Clean up data structure to remove empty fields, etc.
       const cleanedData = {
@@ -542,13 +598,13 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
           .filter((item) => item.location.trim())
           .map((item, index) => {
             // If image is a string URL, include it in the JSON
-            const imageValue = isStringUrl(item.image) ? item.image : null
+            const imageValue = isStringUrl(item.image) ? item.image : null;
             return {
               id: index, // To match with uploaded files
               _id: item._id, // Include the original ID if it exists
               location: item.location,
               image: imageValue,
-            }
+            };
           }),
 
         // Document sections (without files)
@@ -557,10 +613,10 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
         student: prepareDocumentData(data.student),
         job_holder: prepareDocumentData(data.job_holder),
         other_documents: prepareDocumentData(data.other_documents),
-      }
+      };
 
       // Add all regular data as a single JSON string
-      formData.append("data", JSON.stringify(cleanedData))
+      formData.append("data", JSON.stringify(cleanedData));
 
       // Add files separately with identifiable keys
 
@@ -568,73 +624,97 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
       if (data.images && data.images.length > 0) {
         data.images.forEach((file, index) => {
           if (isFile(file) && file.size > 0) {
-            formData.append(`images[${index}]`, file)
+            formData.append(`images[${index}]`, file);
           }
-        })
+        });
       }
 
       // Location images (new uploads only)
       data.locationImages.forEach((item, index) => {
         if (isFile(item.image) && item.image.size > 0) {
-          formData.append(`locationImages[${index}]`, item.image)
+          formData.append(`locationImages[${index}]`, item.image);
         }
-      })
+      });
 
       // Document icons for each section (new uploads only)
-      appendDocumentFiles(formData, data.general_documents, "general_documents")
-      appendDocumentFiles(formData, data.business_person, "business_person")
-      appendDocumentFiles(formData, data.student, "student")
-      appendDocumentFiles(formData, data.job_holder, "job_holder")
-      appendDocumentFiles(formData, data.other_documents, "other_documents")
+      appendDocumentFiles(
+        formData,
+        data.general_documents,
+        "general_documents",
+      );
+      appendDocumentFiles(formData, data.business_person, "business_person");
+      appendDocumentFiles(formData, data.student, "student");
+      appendDocumentFiles(formData, data.job_holder, "job_holder");
+      appendDocumentFiles(formData, data.other_documents, "other_documents");
 
       // Add visa ID for update
-      formData.append("visaId", visaData._id)
+      formData.append("visaId", visaData._id);
 
-      const response = await updateVisa({ countryName: countryName, visaData: formData }).unwrap()
-      toast.success("Visa information updated successfully!")
+      const response = await updateVisa({
+        countryName: countryName,
+        visaData: formData,
+      }).unwrap();
+      toast.success("Visa information updated successfully!");
       // Optionally, redirect or refresh data after successful update
     } catch (error) {
-      toast.error("Error updating visa information")
-      console.error("Error updating visa:", error)
+      toast.error("Error updating visa information");
+      console.error("Error updating visa:", error);
     }
-  }
+  };
 
   // Helper for preparing document data without files
   const prepareDocumentData = (docs: any[]) => {
     return docs
-      .filter((doc) => doc.title && doc.details.some((detail: any) => detail?.trim().length > 0))
+      .filter(
+        (doc) =>
+          doc.title &&
+          doc.details.some((detail: any) => detail?.trim().length > 0),
+      )
       .map((doc, index) => {
         // If icon is a string URL, include it in the JSON
-        const iconValue = isStringUrl(doc.icon) ? doc.icon : null
+        const iconValue = isStringUrl(doc.icon) ? doc.icon : null;
         return {
           id: index, // To match with uploaded files
           _id: doc._id, // Include the original ID if it exists
           title: doc.title,
-          details: doc.details.filter((detail: any) => detail?.trim().length > 0),
+          details: doc.details.filter(
+            (detail: any) => detail?.trim().length > 0,
+          ),
           icon: iconValue,
-        }
-      })
-  }
+        };
+      });
+  };
 
   // Helper for appending document files
-  const appendDocumentFiles = (formData: FormData, docs: any[], sectionName: string) => {
+  const appendDocumentFiles = (
+    formData: FormData,
+    docs: any[],
+    sectionName: string,
+  ) => {
     docs.forEach((doc, index) => {
       if (isFile(doc.icon) && doc.icon.size > 0) {
-        formData.append(`${sectionName}Icons[${index}]`, doc.icon)
+        formData.append(`${sectionName}Icons[${index}]`, doc.icon);
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-2 px-4 py-8 dark:bg-boxdark">
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit, (errors) => {
-            console.error("Form validation errors:", errors)
-            toast.error("Please fill all required fields")
-            return false
-          })} className="mx-auto max-w-[1400px]" encType="multipart/form-data">
+        <form
+          onSubmit={handleSubmit(onSubmit, (errors) => {
+            console.error("Form validation errors:", errors);
+            toast.error("Please fill all required fields");
+            return false;
+          })}
+          className="mx-auto max-w-[1400px]"
+          encType="multipart/form-data"
+        >
           {/* Add Error Summary at the top of the form */}
-          <ErrorSummary errors={errors} title="Please fix the following errors:" />
+          <ErrorSummary
+            errors={errors}
+            title="Please fix the following errors:"
+          />
 
           {/* Header Section */}
           <div className="mb-8 rounded-xl bg-white p-8 shadow-card transition-shadow hover:shadow-1 dark:bg-boxdark-2 dark:shadow-none dark:hover:shadow-none">
@@ -682,7 +762,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   />
                 </div>
                 <div className=" md:col-span-2">
-                  {noteFields.map((item, index) => (
+                  {/* {noteFields.map((item, index) => (
                     <TextInput
                       type="textarea"
                       key={item.id}
@@ -691,7 +771,40 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                       className="min-h-[120px] bg-gray-2 transition-colors focus:bg-white dark:bg-form-input dark:focus:bg-boxdark"
                       onChange={(e) => handleNoteChange(index, e.target.value)}
                     />
+                  ))} */}
+                  {noteFields.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="relative flex w-full flex-col space-y-4"
+                    >
+                      <TextInput
+                        type="textarea"
+                        name={`note.${index}.text`}
+                        label={`Notes ${index + 1}`}
+                        onChange={(e) =>
+                          handleNoteChange(index, e.target.value)
+                        }
+                      />
+
+                      <div className="mt-12">
+                        {noteFields.length > 1 && (
+                          <Button
+                            btnType="button"
+                            containerStyles="px-2 py-0 bg-transparent text-red text-xl rounded absolute right-0 top-0"
+                            title="Remove"
+                            icon={<span>x</span>}
+                            handleClick={() => removeNote(index)}
+                          />
+                        )}
+                      </div>
+                    </div>
                   ))}
+                  <Button
+                    btnType="button"
+                    containerStyles="bg-teal_blue text-white rounded-lg mt-4 px-4 py-2"
+                    title="Add Another Note"
+                    handleClick={() => appendNote({ text: "" })}
+                  />
                 </div>
               </div>
             </div>
@@ -699,7 +812,9 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
 
           {/* General Information Section */}
           <div className="mb-8 rounded-xl bg-white p-8 shadow-card transition-shadow hover:shadow-1 dark:bg-boxdark-2 dark:shadow-none dark:hover:shadow-none">
-            <h3 className="mb-6 text-xl font-semibold text-black dark:text-white">General Information</h3>
+            <h3 className="mb-6 text-xl font-semibold text-black dark:text-white">
+              General Information
+            </h3>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               <TextInput
                 name="capital"
@@ -737,7 +852,9 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
 
           {/* Visa Price Section */}
           <div className="mb-8 rounded-xl bg-white p-8 shadow-card transition-shadow hover:shadow-1 dark:bg-boxdark-2 dark:shadow-none dark:hover:shadow-none">
-            <h3 className="mb-6 text-xl font-semibold text-black dark:text-white">Visa Price Information</h3>
+            <h3 className="mb-6 text-xl font-semibold text-black dark:text-white">
+              Visa Price Information
+            </h3>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               <TextInput
                 required
@@ -775,16 +892,17 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                         onClick={() => {
                           if (locationImagePreviews[index]) {
                             if (
-                              typeof locationImagePreviews[index] === "string" &&
+                              typeof locationImagePreviews[index] ===
+                                "string" &&
                               locationImagePreviews[index].startsWith("blob:")
                             ) {
-                              URL.revokeObjectURL(locationImagePreviews[index])
+                              URL.revokeObjectURL(locationImagePreviews[index]);
                             }
                           }
-                          const newPreviews = [...locationImagePreviews]
-                          newPreviews.splice(index, 1)
-                          setLocationImagePreviews(newPreviews)
-                          removeLocation(index)
+                          const newPreviews = [...locationImagePreviews];
+                          newPreviews.splice(index, 1);
+                          setLocationImagePreviews(newPreviews);
+                          removeLocation(index);
                         }}
                         className="hover:text-red-700 rounded-full bg-red p-1 text-white"
                       >
@@ -798,7 +916,11 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                         {locationImagePreviews[index] ? (
                           <div className="relative overflow-hidden rounded-lg">
                             <Image
-                              src={locationImagePreviews[index] || "/placeholder.svg" || "/placeholder.svg"}
+                              src={
+                                locationImagePreviews[index] ||
+                                "/placeholder.svg" ||
+                                "/placeholder.svg"
+                              }
                               alt={`Location ${index + 1}`}
                               width={400}
                               height={300}
@@ -815,13 +937,13 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                         ) : (
                           <div className="space-y-2">
                             <label
-                              className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed 
+                              className={`flex h-48 w-full flex-col items-center justify-center border-2 border-dashed 
                               ${fileErrors.locationImages[index] ? "border-red-500" : "border-gray-300"} 
-                              rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors`}
+                              bg-gray-50 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors`}
                             >
                               <div className="flex flex-col items-center justify-center pb-6 pt-5">
                                 <svg
-                                  className={`w-10 h-10 mb-3 ${fileErrors.locationImages[index] ? "text-red-500" : "text-gray-400"}`}
+                                  className={`mb-3 h-10 w-10 ${fileErrors.locationImages[index] ? "text-red-500" : "text-gray-400"}`}
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -834,18 +956,26 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                                   />
                                 </svg>
-                                <p className="mb-2 text-sm text-gray-500">Click to upload location image</p>
-                                <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                                <p className="text-gray-500 mb-2 text-sm">
+                                  Click to upload location image
+                                </p>
+                                <p className="text-gray-500 text-xs">
+                                  PNG, JPG up to 10MB
+                                </p>
                               </div>
                               <input
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => handleLocationImageChange(index, e)}
+                                onChange={(e) =>
+                                  handleLocationImageChange(index, e)
+                                }
                                 className="hidden"
                               />
                             </label>
                             {fileErrors.locationImages[index] && (
-                              <p className="text-sm text-red-500">{fileErrors.locationImages[index]}</p>
+                              <p className="text-red-500 text-sm">
+                                {fileErrors.locationImages[index]}
+                              </p>
                             )}
                           </div>
                         )}
@@ -865,7 +995,9 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
               btnType="button"
               containerStyles="mt-6 bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
               title="Add Another Location"
-              handleClick={() => appendLocation({ image: {} as File, location: "" })}
+              handleClick={() =>
+                appendLocation({ image: {} as File, location: "" })
+              }
               icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -874,7 +1006,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
               }
             />
@@ -885,13 +1022,13 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
             <div className="space-y-6">
               <div className="space-y-2">
                 <label
-                  className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed 
+                  className={`flex h-40 w-full flex-col items-center justify-center border-2 border-dashed 
                   ${fileErrors.generalImages ? "border-red-500" : "border-gray-300"} 
-                  rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors`}
+                  bg-gray-50 hover:bg-gray-100 cursor-pointer rounded-xl transition-colors`}
                 >
                   <div className="flex flex-col items-center justify-center pb-6 pt-5">
                     <svg
-                      className={`w-12 h-12 mb-4 ${fileErrors.generalImages ? "text-red-500" : "text-gray-400"}`}
+                      className={`mb-4 h-12 w-12 ${fileErrors.generalImages ? "text-red-500" : "text-gray-400"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -904,10 +1041,14 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       />
                     </svg>
-                    <p className="text-gray-500 mb-2 text-lg">Click to upload multiple images</p>
+                    <p className="text-gray-500 mb-2 text-lg">
+                      Click to upload multiple images
+                    </p>
                     <p className="text-gray-500 text-sm">PNG, JPG up to 10MB</p>
                     {imagePreviews.length > 0 && (
-                      <p className="mt-2 text-sm font-medium text-teal-600">{imagePreviews.length} images uploaded</p>
+                      <p className="mt-2 text-sm font-medium text-teal-600">
+                        {imagePreviews.length} images uploaded
+                      </p>
                     )}
                   </div>
                   <input
@@ -919,7 +1060,11 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                     className="hidden"
                   />
                 </label>
-                {fileErrors.generalImages && <p className="text-sm text-red-500">{fileErrors.generalImages}</p>}
+                {fileErrors.generalImages && (
+                  <p className="text-red-500 text-sm">
+                    {fileErrors.generalImages}
+                  </p>
+                )}
               </div>
 
               {imagePreviews.length > 0 && (
@@ -948,7 +1093,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                           viewBox="0 0 24 24"
                           stroke="currentColor"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -1120,6 +1270,5 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
         </form>
       </FormProvider>
     </div>
-  )
+  );
 }
-
