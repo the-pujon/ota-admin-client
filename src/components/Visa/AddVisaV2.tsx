@@ -438,20 +438,20 @@ export default function AddVisaV2() {
       // console.log("FormData entries:", formDataEntries);
 
       // Submit the data
-      // const response = await addVisa(formData).unwrap();
+      const response = await addVisa(formData).unwrap();
       toast.success("Visa information added successfully!");
 
       // Reset form after successful submission
-      // reset();
-      // setImagePreviews([]);
-      // setLocationImagePreviews([]);
-      // setIconPreviews({
-      //   general_documents: {},
-      //   business_person: {},
-      //   student: {},
-      //   job_holder: {},
-      //   other_documents: {},
-      // });
+      reset();
+      setImagePreviews([]);
+      setLocationImagePreviews([]);
+      setIconPreviews({
+        general_documents: {},
+        business_person: {},
+        student: {},
+        job_holder: {},
+        other_documents: {},
+      });
     } catch (error) {
       console.error("Error adding visa:", error);
       toast.error("Failed to add visa information. Please try again.");
