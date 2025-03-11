@@ -698,6 +698,26 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
     });
   };
 
+  const removeDocument = (fieldName: DocumentFieldName, index: number) => {
+    switch (fieldName) {
+      case "general_documents":
+        removeGeneralDocument(index);
+        break;
+      case "business_person":
+        removeBusinessDocument(index);
+        break;
+      case "student":
+        removeStudentDocument(index);
+        break;
+      case "job_holder":
+        removeJobHolderDocument(index);
+        break;
+      case "other_documents":
+        removeOtherDocument(index);
+        break;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-2 px-4 py-8 dark:bg-boxdark">
       <FormProvider {...methods}>
@@ -1119,6 +1139,8 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={generalDocumentsFields.length}
                 // fileError={fileErrors.general_documents[index]}
               />
             ))}
@@ -1148,10 +1170,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={businessPersonFields.length}
                 // fileError={fileErrors.business_person[index]}
               />
             ))}
-            <Button
+            {/* <Button
               btnType="button"
               containerStyles="bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
               title="Add Another Business Person Document"
@@ -1163,7 +1187,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   icon: {} as File,
                 })
               }
-            />
+            /> */}
           </Accordion>
 
           {/* Student Documents Section */}
@@ -1177,10 +1201,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={studentFields.length}
                 // fileError={fileErrors.student[index]}
               />
             ))}
-            <Button
+            {/* <Button
               btnType="button"
               containerStyles="bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
               title="Add Another Student Document"
@@ -1192,7 +1218,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   icon: {} as File,
                 })
               }
-            />
+            /> */}
           </Accordion>
 
           {/* Job Holder Documents Section */}
@@ -1206,10 +1232,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={jobHolderFields.length}
                 // fileError={fileErrors.job_holder[index]}
               />
             ))}
-            <Button
+            {/* <Button
               btnType="button"
               containerStyles="bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
               title="Add Another Job Holder Document"
@@ -1221,7 +1249,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   icon: {} as File,
                 })
               }
-            />
+            /> */}
           </Accordion>
 
           {/* Other Documents Section */}
@@ -1235,10 +1263,12 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={otherDocumentsFields.length}
                 // fileError={fileErrors.other_documents[index]}
               />
             ))}
-            <Button
+            {/* <Button
               btnType="button"
               containerStyles="bg-teal-600 hover:bg-teal-700 text-white rounded-lg px-6 py-3 flex items-center justify-center transition-colors"
               title="Add Another Document"
@@ -1250,7 +1280,7 @@ export default function EditVisaV2({ countryName }: { countryName: string }) {
                   icon: {} as File,
                 })
               }
-            />
+            /> */}
           </Accordion>
           {/* Submit Button */}
           <div className="mb-16 mt-12 flex justify-center">
