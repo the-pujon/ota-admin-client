@@ -29,8 +29,11 @@ const menuGroups = [
         label: "Visa",
         route: "#",
         children: [
-          { label: "List of Visa", route: "/listVisa" },
-          { label: "Add Visa Info", route: "/addVisa" },
+          // { label: "List of Visa", route: "/listVisa" },
+          { label: "All Visa List", route: "/visaList" },
+          // { label: "Add Visa Info", route: "/addVisa" },
+          // { label: "Add new Visa", route: "/addNewVisa" },
+          { label: "Add Visa V2", route: "/addVisa-V2" },
           // { label: "Manage Visa", route: "/visa/manage" },
         ],
       },

@@ -10,12 +10,10 @@ const Page = () => {
     <DefaultLayout>
       <div className="flex flex-col gap-10">
         <Breadcrumb pageName="Add Package" />
-        <AddPackage/>
+        <AddPackage />
       </div>
     </DefaultLayout>
   );
 };
 
 export default Page;
-
-

@@ -59,7 +59,7 @@ const [iconPreviews, setIconPreviews] = useState<{
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files, "files")
+    // console.log(files, "files")
     if (files) {
       const fileArray:any = Array.from(files);
       const newImagePreviews = fileArray.map((file:any) => URL.createObjectURL(file));
@@ -237,10 +237,10 @@ const [iconPreviews, setIconPreviews] = useState<{
         }
       });
     }
-    for (const [key, value] of formDataToSend.entries()) {
-      console.log(`${key}:`, value);
-    }
-    console.log("formData: ",formDataToSend);
+    // for (const [key, value] of formDataToSend.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
+    // console.log("formData: ",formDataToSend);
     try {
       // const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/visa/${visaInfo.countryName}`, formDataToSend, {
       //   headers: {
@@ -248,9 +248,9 @@ const [iconPreviews, setIconPreviews] = useState<{
       //   },
       // });
       const response = await updateVisa(formDataToSend).unwrap();
-      console.log(response)
+      // console.log(response)
       toast.success("Content updated successfully!");
-      console.log("Visa updated successfully:", response);
+      // console.log("Visa updated successfully:", response);
     } catch (error) {
       toast.error("Something Going Wrong!");
       console.error("Error updating visa:", error);
