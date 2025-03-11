@@ -14,6 +14,12 @@ import {
   MdOutlinePlaylistAdd,
 } from "react-icons/md";
 import { FiDelete } from "react-icons/fi";
+import { errorToast, successToast } from "../Toast";
+import {
+  packageCategories,
+  packageCountries,
+  packageDurations,
+} from "@/constants";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -22,6 +28,15 @@ const formSchema = z.object({
     (value) => Number(value),
     z.number().positive("Price must be greater than zero"),
   ),
+  discountPrice: z.preprocess(
+    (value) => Number(value),
+    z.number().positive("Price must be greater than zero").optional(),
+  ),
+  discountPercentage: z.preprocess(
+    (value) => Number(value),
+    z.number().positive("Price must be greater than zero").optional(),
+  ),
+
   highlights: z
     .array(
       z.object({
@@ -65,20 +80,21 @@ const formSchema = z.object({
       description: z.string().min(1, "Itinerary description is required"),
     }),
   ),
-  category: z.string().min(1, "Category is required"), // New select field
-  duration: z.string().min(1, "Duration is required"), // New select field
-  country: z.string().min(1, "Country is required"), // New select field
+  category: z.string().min(1, "Category is required"), 
+  duration: z.string().min(1, "Duration is required"), 
+  country: z.string().min(1, "Country is required"), 
   images: z
     .array(
       z.object({
-        file: z.instanceof(File).nullable(),
+        file: z
+          .custom<File | null>(
+            (file) => file instanceof File || file === null,
+            "Invalid file",
+          )
+          .nullable(),
       }),
     )
-    .length(4, "Exactly 4 images are required")
-    .refine(
-      (images) => images.every((image) => image.file),
-      "All images must have a file",
-    ),
+    .length(4, "Exactly 4 images are required"),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -97,20 +113,27 @@ const DynamicForm: React.FC = () => {
       title: "",
       about: "",
       price: 0,
+      discountPrice: 0,
+      discountPercentage: 0,
+      // isExclusive: false,
       highlights: [{ title: "", description: "" }],
       inclusions: [{ title: "" }],
       exclusions: [{ title: "" }],
       cities: [{ title: "" }],
       importantNotes: [{ title: "" }],
       detailedItinerary: [{ day: "", title: "", description: "" }],
-      category: "", // Default value for the select field
-      duration: "", // Default value for the select Duration
-      country: "", // Default value for the select Duration
+      category: "",
+      duration: "",
+      country: "",
       images: [{ file: null }],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: imagesFields,
+    append: appendImages,
+    remove: removeImage,
+  } = useFieldArray({
     control,
     name: "images", // Field array name
   });
@@ -179,6 +202,13 @@ const DynamicForm: React.FC = () => {
     formData.append("title", data.title);
     formData.append("about", data.about);
     formData.append("price", data.price.toString());
+    if (data.discountPrice !== undefined) {
+      formData.append("discountPrice", data?.discountPrice.toString());
+    }
+    if (data.discountPercentage !== undefined) {
+      formData.append("discountPercentage", data.discountPercentage.toString());
+    }
+
     formData.append("category", data.category);
     formData.append("duration", data.duration);
     formData.append("country", data.country);
@@ -224,11 +254,6 @@ const DynamicForm: React.FC = () => {
       }
     });
 
-    // console formdata
-    // for (const pair of formData.entries()) {
-    //   console.log(pair[0], pair[1]);
-    // }
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/package/create`,
@@ -239,13 +264,17 @@ const DynamicForm: React.FC = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Upload Failed: " + response.statusText);
+        throw new Error(
+          `Request failed with status: ${response.status} - ${response.statusText}`,
+        );
       }
 
       const responseData = await response.json();
       console.log("Upload Success:", responseData);
+      successToast("Data submitted successfully");
     } catch (error) {
       console.error("Upload Failed:", error);
+      errorToast("Error Occurred, please try again.", error);
     } finally {
       setLoading(false);
     }
@@ -255,9 +284,6 @@ const DynamicForm: React.FC = () => {
     <div className="">
       <div className="">
         <div className=" flex items-center justify-center bg-white p-6">
-          {/* <span className=" w-full rounded-sm bg-slate-600 p-2 text-center text-2xl font-semibold uppercase text-slate-200">
-            Package Submit FORM
-          </span> */}
           <div className="w-full">
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -309,21 +335,75 @@ const DynamicForm: React.FC = () => {
                 )}
               </div>
               {/* Price End*/}
+              {/* discount Price */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Discount Price
+                </label>
+                <input
+                  {...register("discountPrice")}
+                  className="border-gray-300 w-full rounded border p-2"
+                  placeholder="Enter Discount Price"
+                  type="number"
+                />
+                {errors.discountPrice && (
+                  <p className="text-red-500 text-sm text-red">
+                    {errors.discountPrice?.message}
+                  </p>
+                )}
+              </div>
+              {/* discount Price End*/}
+
+              {/* discountPercentage */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Discount Percentage
+                </label>
+                <input
+                  {...register("discountPercentage")}
+                  className="border-gray-300 w-full rounded border p-2"
+                  placeholder="Enter Discount Percentage"
+                  type="number"
+                />
+                {errors.discountPercentage && (
+                  <p className="text-red-500 text-sm text-red">
+                    {errors.discountPercentage?.message}
+                  </p>
+                )}
+              </div>
+
               {/* Highlights */}
               <div>
                 <label className="block text-sm font-medium">Highlights</label>
                 {highlightFields.map((field, index) => (
-                  <div key={field.id} className="mb-2 flex items-center gap-2">
-                    <input
-                      {...register(`highlights.${index}.title`)}
-                      className="border-gray-300 w-1/2 rounded border p-2"
-                      placeholder="Highlight Title"
-                    />
-                    <input
-                      {...register(`highlights.${index}.description`)}
-                      className="border-gray-300 w-1/2 rounded border p-2"
-                      placeholder="Highlight Description"
-                    />
+                  <div
+                    key={field.id}
+                    className="mb-2 flex w-full items-center gap-2"
+                  >
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`highlights.${index}.title`)}
+                        className="border-gray-300 w-full  rounded border p-2"
+                        placeholder="Highlight Title"
+                      />
+                      {errors.highlights?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.highlights[index].title?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex w-full flex-col items-start justify-start">
+                      <input
+                        {...register(`highlights.${index}.description`)}
+                        className="border-gray-300 w-full  rounded border p-2"
+                        placeholder="Highlight Description"
+                      />
+                      {errors.highlights?.[index]?.description && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.highlights[index].description?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeHighlight(index)}
@@ -334,6 +414,13 @@ const DynamicForm: React.FC = () => {
                     </button>
                   </div>
                 ))}
+
+                {errors.highlights &&
+                  typeof errors.highlights.message === "string" && (
+                    <p className="text-red-500 text-sm text-red">
+                      {errors.highlights?.message}
+                    </p>
+                  )}
                 <button
                   type="button"
                   onClick={() =>
@@ -349,13 +436,22 @@ const DynamicForm: React.FC = () => {
               {/* Inclusions */}
               <div>
                 <label className="block text-sm font-medium">Inclusions</label>
-                {inclusionFields.map((field, index) => (
+                {inclusionFields?.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`inclusions.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Inclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`inclusions.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Inclusion"
+                      />
+
+                      {errors.inclusions?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.inclusions[index].title?.message}
+                        </p>
+                      )}
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => removeInclusion(index)}
@@ -383,11 +479,18 @@ const DynamicForm: React.FC = () => {
                 <label className="block text-sm font-medium">Exclusions</label>
                 {exclusionFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`exclusions.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Exclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`exclusions.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Exclusion"
+                      />
+                      {errors.exclusions?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.exclusions[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeExclusion(index)}
@@ -414,11 +517,18 @@ const DynamicForm: React.FC = () => {
                 <label className="block text-sm font-medium">Cities</label>
                 {citiesFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`cities.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Exclusion"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`cities.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Exclusion"
+                      />
+                      {errors.cities?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.cities[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removecities(index)}
@@ -447,11 +557,18 @@ const DynamicForm: React.FC = () => {
                 </label>
                 {noteFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
-                    <input
-                      {...register(`importantNotes.${index}.title`)}
-                      className="border-gray-300 w-full rounded border p-2"
-                      placeholder="Note"
-                    />
+                    <div className="flex w-full  flex-col items-start justify-start ">
+                      <input
+                        {...register(`importantNotes.${index}.title`)}
+                        className="border-gray-300 w-full rounded border p-2"
+                        placeholder="Note"
+                      />
+                      {errors.importantNotes?.[index]?.title && (
+                        <p className="text-red-500 text-sm text-red">
+                          {errors.importantNotes[index].title?.message}
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeNote(index)}
@@ -482,23 +599,47 @@ const DynamicForm: React.FC = () => {
                   <div key={field.id} className="mb-4 space-y-2">
                     <div className=" flex w-full items-start justify-center">
                       <div className=" flex w-full flex-col items-start justify-start gap-y-2">
-                        <input
-                          {...register(`detailedItinerary.${index}.day`)}
-                          className="border-gray-300 w-full rounded border p-2"
-                          placeholder="Day"
-                        />
-                        <input
-                          {...register(`detailedItinerary.${index}.title`)}
-                          className="border-gray-300 w-full rounded border p-2"
-                          placeholder="Itinerary Title"
-                        />
-                        <textarea
-                          {...register(
-                            `detailedItinerary.${index}.description`,
+                        <div className="flex w-full  flex-col items-start justify-start ">
+                          <input
+                            {...register(`detailedItinerary.${index}.day`)}
+                            className="border-gray-300 w-full rounded border p-2"
+                            placeholder="Day"
+                          />
+                          {errors.detailedItinerary?.[index]?.day && (
+                            <p className="text-red-500 text-sm text-red">
+                              {errors.detailedItinerary[index].day?.message}
+                            </p>
                           )}
-                          className="border-gray-300 w-full rounded border p-2"
-                          placeholder="Itinerary Description"
-                        />
+                        </div>
+                        <div className="flex w-full  flex-col items-start justify-start ">
+                          <input
+                            {...register(`detailedItinerary.${index}.title`)}
+                            className="border-gray-300 w-full rounded border p-2"
+                            placeholder="Itinerary Title"
+                          />
+                          {errors.detailedItinerary?.[index]?.title && (
+                            <p className="text-red-500 text-sm text-red">
+                              {errors.detailedItinerary[index].title?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex w-full  flex-col items-start justify-start ">
+                          <textarea
+                            {...register(
+                              `detailedItinerary.${index}.description`,
+                            )}
+                            className="border-gray-300 w-full rounded border p-2"
+                            placeholder="Itinerary Description"
+                          />
+                          {errors.detailedItinerary?.[index]?.description && (
+                            <p className="text-red-500 text-sm text-red">
+                              {
+                                errors.detailedItinerary[index].description
+                                  ?.message
+                              }
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <button
                         type="button"
@@ -522,8 +663,7 @@ const DynamicForm: React.FC = () => {
                   Add
                 </button>
               </div>
-              {/* Detailed Itinerary End */}
-              {/* Select Option (Category) */}
+             
               <div>
                 <label className="block text-sm font-medium">Category</label>
                 <select
@@ -531,26 +671,19 @@ const DynamicForm: React.FC = () => {
                   className="border-gray-300 w-full rounded border p-2"
                 >
                   <option value="">Select a category</option>
-                  <option value="Quick Gateways">Quick Gateways</option>
-                  <option value="Adventure & Discovery">
-                    Adventure & Discovery
-                  </option>
-                  <option value="Relaxation & Retreat">
-                    Relaxation & Retreat
-                  </option>
-                  <option value="Cultural Immersion">Cultural Immersion</option>
-                  <option value="Luxury & Exclusivity">
-                    Luxury & Exclusivity
-                  </option>
+                  {packageCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
                 </select>
                 {errors.category && (
-                  <p className="text-red-500 text-sm text-red">
+                  <p className="text-red-500 text-sm">
                     {errors.category.message}
                   </p>
                 )}
               </div>
-              {/* Select Option (Category) End*/}
-              {/* Select Duration*/}
+              
               <div>
                 <label className="block text-sm font-medium">Duration</label>
                 <select
@@ -558,20 +691,19 @@ const DynamicForm: React.FC = () => {
                   className="border-gray-300 w-full rounded border p-2"
                 >
                   <option value="">Select a duration</option>
-                  <option value="3 day 2 night">3 day 2 night</option>
-                  <option value="4 day 3 night">4 day 3 night</option>
-                  <option value="5 day 4 night">5 day 4 night</option>
-                  <option value="5 day 4 night">5 day 4 night</option>
-                  <option value="7 day 6 night">7 day 6 night</option>
+                  {packageDurations.map((duration) => (
+                    <option key={duration} value={duration}>
+                      {duration}
+                    </option>
+                  ))}
                 </select>
-                {errors.category && (
-                  <p className="text-red-500 text-sm text-red">
-                    {errors.duration?.message}
+                {errors.duration && (
+                  <p className="text-red-500 text-sm">
+                    {errors.duration.message}
                   </p>
                 )}
               </div>
-              {/* Select Duration End*/}
-              {/* Select Country*/}
+           
               <div>
                 <label className="block text-sm font-medium">Country</label>
                 <select
@@ -579,19 +711,15 @@ const DynamicForm: React.FC = () => {
                   className="border-gray-300 w-full rounded border p-2"
                 >
                   <option value="">Select a Country</option>
-                  <option value="India">India</option>
-                  <option value="Nepal">Nepal</option>
-                  <option value="Turkey">Turkey</option>
-                  <option value="Thailand">Thailand</option>
-                  <option value="Egypt">Egypt</option>
-                  <option value="Maldives">Maldives</option>
-                  <option value="Dubai">Dubai</option>
-                  <option value="Singapore">Singapore</option>
-                  <option value="Malaysia">Malaysia</option>
+                  {packageCountries.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
                 </select>
-                {errors.category && (
-                  <p className="text-red-500 text-sm text-red">
-                    {errors.country?.message}
+                {errors.country && (
+                  <p className="text-red-500 text-sm">
+                    {errors.country.message}
                   </p>
                 )}
               </div>
@@ -601,7 +729,7 @@ const DynamicForm: React.FC = () => {
 
               <div>
                 <label className="block font-medium">Images</label>
-                {fields.map((field, index) => (
+                {imagesFields.map((field, index) => (
                   <div key={field.id} className="mb-2 flex items-center gap-4">
                     <Controller
                       control={control}
@@ -620,47 +748,40 @@ const DynamicForm: React.FC = () => {
                     />
                     <button
                       type="button"
-                      onClick={() => remove(index)}
+                      onClick={() => removeImage(index)}
                       className="bg-red-500 rounded px-2 py-1 text-white"
                     >
-                      Remove
+                      <FiDelete className="text-slate-400" size={24} />
                     </button>
                   </div>
                 ))}
                 {errors.images && (
-                  <p className="text-red-500 text-red">
+                  <p className="text-red-500 text-sm text-red">
                     {errors.images.message}
                   </p>
                 )}
+
                 <button
                   type="button"
-                  onClick={() => append({ file: null })}
+                  onClick={() => appendImages({ file: null })}
                   className=" flex items-center justify-center gap-x-1 rounded-md p-1 text-slate-600"
                 >
                   <MdOutlineAddPhotoAlternate />
                   Add Image
                 </button>
               </div>
-              {/* <div className="">
-        Add Image
-          
-        </div> */}
 
-              {/* images */}
-              {/* <button
-          disabled={loading}
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded"
-        >
-          {loading ? "Loading ...." : "Submit Here"}
-        </button> */}
-              <div className="flex items-center justify-center">
+              <div className="flex w-full items-center justify-center ">
                 <Button
                   isDisabled={loading}
                   btnType="submit"
                   title={loading ? "Loading ...." : "Submit Here"}
-                  containerStyles={`${loading ? "bg-slate-400" : "bg-orange-deep"} p-2 text-white uppercase rounded-md`}
+                  containerStyles={`${loading ? "bg-slate-400" : "bg-orange-deep"} w-1/2 p-2 text-white uppercase rounded-md`}
                 />
+              </div>
+              <div className=" text-slate-500">
+                Note : Same title and more or less than 4 images are not
+                permitted.
               </div>
             </form>
           </div>

@@ -13,7 +13,7 @@ export const warningToast = (message: string) => {
     
   });
 };
-export const errorToast = (message: string) => {
+export const errorToast = (message: string, error: unknown) => {
   toast.error(message, {
     
   });
