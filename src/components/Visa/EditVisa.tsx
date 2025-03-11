@@ -55,6 +55,7 @@ const [iconPreviews, setIconPreviews] = useState<{
   job_holder: {},
   other_documents: {},
 });
+
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
