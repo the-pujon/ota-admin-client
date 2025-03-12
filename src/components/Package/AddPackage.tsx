@@ -269,7 +269,6 @@ const DynamicForm: React.FC = () => {
           `Request failed with status: ${response.status} - ${response.statusText}`,
         );
       }
-
       const responseData = await response.json();
       console.log("Upload Success:", responseData);
       successToast("Data submitted successfully");
