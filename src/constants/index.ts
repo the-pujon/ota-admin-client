@@ -44,7 +44,18 @@ export const packageDurations = [
 	"3 day 2 night",
 	"4 day 3 night",
 	"5 day 4 night",
+	"6 day 5 night",
 	"7 day 6 night",
+	"8 day 7 night",
+	"9 day 8 night",
+	"10 day 9 night",
+	"11 day 10 night",
+	"12 day 11 night",
+	"13 day 12 night",
+	"14 day 13 night",
+	"15 day 14 night",
+	"16 day 15 night",
+	"17 day 16 night",
   ];
 
 export const packageCountries = [
@@ -57,4 +68,5 @@ export const packageCountries = [
 	"Dubai",
 	"Singapore",
 	"Malaysia",
+  "Srilanka"
   ];

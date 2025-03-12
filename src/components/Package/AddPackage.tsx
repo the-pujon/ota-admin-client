@@ -80,9 +80,9 @@ const formSchema = z.object({
       description: z.string().min(1, "Itinerary description is required"),
     }),
   ),
-  category: z.string().min(1, "Category is required"), 
-  duration: z.string().min(1, "Duration is required"), 
-  country: z.string().min(1, "Country is required"), 
+  category: z.string().min(1, "Category is required"),
+  duration: z.string().min(1, "Duration is required"),
+  country: z.string().min(1, "Country is required"),
   images: z
     .array(
       z.object({
@@ -106,6 +106,7 @@ const DynamicForm: React.FC = () => {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -272,6 +273,7 @@ const DynamicForm: React.FC = () => {
       const responseData = await response.json();
       console.log("Upload Success:", responseData);
       successToast("Data submitted successfully");
+      reset();
     } catch (error) {
       console.error("Upload Failed:", error);
       errorToast("Error Occurred, please try again.", error);
@@ -663,7 +665,7 @@ const DynamicForm: React.FC = () => {
                   Add
                 </button>
               </div>
-             
+
               <div>
                 <label className="block text-sm font-medium">Category</label>
                 <select
@@ -683,7 +685,7 @@ const DynamicForm: React.FC = () => {
                   </p>
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium">Duration</label>
                 <select
@@ -703,7 +705,7 @@ const DynamicForm: React.FC = () => {
                   </p>
                 )}
               </div>
-           
+
               <div>
                 <label className="block text-sm font-medium">Country</label>
                 <select
