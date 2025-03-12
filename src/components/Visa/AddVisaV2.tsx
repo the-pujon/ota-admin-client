@@ -265,6 +265,27 @@ export default function AddVisaV2() {
     [],
   );
 
+
+  const removeDocument = (fieldName: DocumentFieldName, index: number) => {
+    switch (fieldName) {
+      case "general_documents":
+        removeGeneralDocument(index);
+        break;
+      case "business_person":
+        removeBusinessDocument(index);
+        break;
+      case "student":
+        removeStudentDocument(index);
+        break;
+      case "job_holder":
+        removeJobHolderDocument(index);
+        break;
+      case "other_documents":
+        removeOtherDocument(index);
+        break;
+    }
+  }
+
   // Update the handleLocationImageChange function to include validation
   const handleLocationImageChange = (
     index: number,
@@ -307,42 +328,19 @@ export default function AddVisaV2() {
     setValue(`note.${index}.text` as const, plainText);
   };
 
-  // const handleDetailsChange = (fieldName: DocumentFieldName, index: number, value: string) => {
-
-  //   console.log(value)
-
-  //   const detailsArray = value
-  //     .split(",")
-  //     .map((detail) => detail.trim())
-  //     .filter((detail) => detail !== "")
-
-  //   console.log(detailsArray)
-  //   setValue(`${fieldName}.${index}.details`, detailsArray)
-  // }
 
   const handleDetailsChange = (
     fieldName: DocumentFieldName,
     index: number,
     value: string,
   ) => {
-    // console.log("Raw Input:", value);
 
     const detailsArray = value
       .split(",")
       .map((detail) => detail.trim())
       .filter((detail) => detail !== "");
 
-    // console.log("Processed Array:", detailsArray);
-
     setValue(`${fieldName}.${index}.details`, detailsArray);
-
-    // Debug: Check if the value updates properly
-    // setTimeout(() => {
-    //   console.log(
-    //     "Updated Value in Form State:",
-    //     getValues(`${fieldName}.${index}.details`),
-    //   );
-    // }, 100);
   };
 
   const onSubmit: SubmitHandler<VisaFormData> = async (data) => {
@@ -904,6 +902,9 @@ export default function AddVisaV2() {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                // removeGeneralDocument={removeGeneralDocument}
+                removeDocument={removeDocument}
+                length={generalDocumentsFields.length}
                 // fileError={fileErrors.general_documents[index]}
               />
             ))}
@@ -933,6 +934,8 @@ export default function AddVisaV2() {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={businessPersonFields.length}
               />
             ))}
           </Accordion>
@@ -948,6 +951,8 @@ export default function AddVisaV2() {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={studentFields.length}
               />
             ))}
           </Accordion>
@@ -963,6 +968,8 @@ export default function AddVisaV2() {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={jobHolderFields.length}
               />
             ))}
           </Accordion>
@@ -978,6 +985,8 @@ export default function AddVisaV2() {
                 handleFileUpload={handleFileUpload}
                 removeIcon={removeIcon}
                 handleDetailsChange={handleDetailsChange}
+                removeDocument={removeDocument}
+                length={otherDocumentsFields.length}
               />
             ))}
           </Accordion>

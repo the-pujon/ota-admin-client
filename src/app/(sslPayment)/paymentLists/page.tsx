@@ -5,7 +5,7 @@ import useRedirectHelper from "@/utils/authRedirectHelper";
 import PaymentList from "@/components/SSLPayment/paymentLists";
 
 const PaymentLists = () => {
-  useRedirectHelper("/paymentLists");
+  // useRedirectHelper("/paymentLists");
  
   return (
     <DefaultLayout>
